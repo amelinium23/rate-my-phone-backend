@@ -1,5 +1,6 @@
 from flask import Response
-from .Brands.brand_routes import brands
+from Brands.brand_routes import brands
+from config import Config
 from . import app
 
 app.register_blueprint(brands)

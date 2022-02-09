@@ -1,14 +1,13 @@
 from ast import Dict, List
-from flask import Blueprint, Response
+from flask import Blueprint, Response, current_app
 import json
 import requests as r
 
 brands = Blueprint('brands', __name__)
 
-GSM_ARENA_API_URL = 'https://script.google.com/macros/s/AKfycbxNu27V2Y2LuKUIQMK8lX1y0joB6YmG6hUwB1fNeVbgzEh22TcDGrOak03Fk3uBHmz-/exec'
-
 @brands.route('/brands')
 def get_device_list() -> Response:
+    GSM_ARENA_API_URL = current_app.config.get('GSM_ARENA_API_URL', '')
     req = r.get(GSM_ARENA_API_URL, {'route': 'brand-list'})
     data: Dict = req.json()
     brands: List['Brand'] = data.get('data', {})
