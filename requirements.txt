@@ -1,0 +1,4 @@
+Flask==2.0.2
+autopep8==1.6.0
+flake8==4.0.1
+requests==2.27.1
