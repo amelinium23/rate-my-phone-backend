@@ -1,7 +1,7 @@
-from flask import Flask, Response
+from flask import Response
 from .Brands.brand_routes import brands
+from . import app
 
-app = Flask(__name__)
 app.register_blueprint(brands)
 
 @app.route('/')
