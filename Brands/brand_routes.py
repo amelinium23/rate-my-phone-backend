@@ -24,11 +24,11 @@ def get_brand_key(key: str) -> Response:
     GSM_ARENA_API_URL = current_app.config.get('GSM_ARENA_API_URL', '')
     req = r.get(GSM_ARENA_API_URL, {'route': 'brand-list'})
     data: Dict = req.json()
-    brands: List[Brand] = [Brand(**brand) for brand in data.get('data', {})]
+    brands: List['Brand'] = [Brand(**brand) for brand in data.get('data', {})]
     return Response(json.dumps(get_brand_by_key(brands, key), cls=EnhancedJSONEncoder))
 
 
-def get_brand_by_key(brands: List[Brand], key: str) -> Brand:
+def get_brand_by_key(brands: List['Brand'], key: str) -> 'Brand':
     for brand in brands:
         if brand.key == key:
             return brand
