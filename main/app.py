@@ -1,5 +1,5 @@
 from flask import Flask, Response
-from Brands.brand_routes import brands
+from brands.brand_routes import brands
 from main.config import DevelopmentConfig
 
 app = Flask(__name__)
