@@ -5,10 +5,10 @@ import requests as r
 from .model.brand import Brand
 from utils.json_utils import EnhancedJSONEncoder
 
-brands = Blueprint('brands', __name__)
+BRANDS = Blueprint('brands', __name__)
 
 
-@brands.route('/brands', methods=['GET'])
+@BRANDS.route('/brands', methods=['GET'])
 def get_brand_list() -> Response:
     GSM_ARENA_API_URL = current_app.config.get('GSM_ARENA_API_URL', '')
     req = r.get(GSM_ARENA_API_URL, {'route': 'brand-list'})
@@ -19,7 +19,7 @@ def get_brand_list() -> Response:
                     content_type=req.headers.get('content-type'))
 
 
-@brands.route('/brands/<key>', methods=['GET'])
+@BRANDS.route('/brands/<key>', methods=['GET'])
 def get_brand_key(key: str) -> Response:
     GSM_ARENA_API_URL = current_app.config.get('GSM_ARENA_API_URL', '')
     req = r.get(GSM_ARENA_API_URL, {'route': 'brand-list'})
