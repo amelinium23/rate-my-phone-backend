@@ -51,8 +51,4 @@ def get_device_list_by_brands() -> Dict:
     req = r.get(GSM_ARENA_API_URL, {'route': 'device-list'})
     data: Dict = req.json()
     json_data = data.get('data', {})
-    # for data in json_data:
-    #   device_list = data.get('device_list', [])
-    #   datclass_device_list = parse_to_device_dataclass(device_list)
-    #   data['device_list'] = datclass_device_list
     return parse_response(json_data)
