@@ -1,13 +1,14 @@
 from flask import Flask, Response
 from brands.brand_routes import BRANDS
-from .config import DevelopmentConfig
+from device.device_routes import DEVICE
+from .config import Config
 
-app = Flask(__name__)
+app: Flask = Flask(__name__)
 
-app.config.from_object(DevelopmentConfig())
+app.config.from_object(Config())
 
 app.register_blueprint(BRANDS)
-
+app.register_blueprint(DEVICE)
 
 @app.route('/')
 def hello_page() -> Response:
