@@ -1,1 +1,1 @@
-web: gunicorn main.app:app
+web: gunicorn wsgi.rate_my_phone_app:app
