@@ -2,7 +2,7 @@ from typing import Dict, List
 from flask import Blueprint, Response, current_app
 import json
 import requests as r
-from brands.model.brand import Brand
+from .model.brand import Brand
 from utils.json_utils import EnhancedJSONEncoder
 
 brands = Blueprint('brands', __name__)

@@ -1,6 +1,6 @@
 from flask import Flask, Response
 from brands.brand_routes import brands
-from main.config import DevelopmentConfig
+from .config import DevelopmentConfig
 
 app = Flask(__name__)
 
