@@ -1,10 +1,10 @@
 from typing import Dict, List
-from flask import Blueprint, Response, current_app, jsonify
+from flask import Response, current_app, jsonify
 import requests as r
 from .model.brand import Brand
 from cachetools import TTLCache, cached
 
-BRANDS = Blueprint('brands', __name__)
+from . import BRANDS
 
 
 @BRANDS.route('/brands', methods=['GET'])
