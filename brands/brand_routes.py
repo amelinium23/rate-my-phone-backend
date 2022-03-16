@@ -7,13 +7,13 @@ from cachetools import TTLCache, cached
 from . import BRANDS
 
 
-@BRANDS.route('/brands', methods=['GET'])
+@BRANDS.route('/', methods=['GET'])
 def get_brand_list() -> Response:
     brands = get_brand_list()
     return jsonify(brands)
 
 
-@BRANDS.route('/brands/<key>', methods=['GET'])
+@BRANDS.route('/<key>', methods=['GET'])
 def get_brand_key(key: str) -> Response:
     brands: List['Brand'] = get_brand_list()
     return jsonify(get_brand_by_key(brands, key))

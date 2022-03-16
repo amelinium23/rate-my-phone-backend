@@ -10,7 +10,8 @@ from . import DEVICE
 
 logger = Logger(__name__)
 
-@DEVICE.route('/device')
+
+@DEVICE.route('/')
 def get_all_devices_by_brand() -> Response:
   """Endpoint for getting all devices
 
@@ -21,7 +22,7 @@ def get_all_devices_by_brand() -> Response:
   return jsonify(devices)
 
 
-@DEVICE.route('/device/<brand_key>')
+@DEVICE.route('/<brand_key>')
 def get_device_by_brand(brand_key: str) -> Response:
   """Endpoint for getting all devices by brand
 
@@ -36,7 +37,7 @@ def get_device_by_brand(brand_key: str) -> Response:
   return jsonify(get_devices_by_key(brand_key, devices))
 
 
-@DEVICE.route('/device/recommended')
+@DEVICE.route('/recommended')
 def get_recommended_devices() -> Response:
   """Getting recommended devices by GSMARENA
 
@@ -47,7 +48,7 @@ def get_recommended_devices() -> Response:
   return jsonify(recommended)
 
 
-@DEVICE.route('/device/details/<device_key>', methods=['GET'])
+@DEVICE.route('/details/<device_key>', methods=['GET'])
 def get_details_of_device(device_key: str) -> Response:
   """Getting device detail from with api key
 
