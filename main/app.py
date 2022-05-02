@@ -9,7 +9,6 @@ from api.api_routes import API
 app: Flask = Flask(__name__)
 
 logger: Logger = Logger(__name__)
-
 app.config.from_object(Config())
 
 
@@ -21,6 +20,7 @@ def register_blueprints():
 
 
 register_blueprints()
+
 
 @app.route('/')
 def hello_page() -> Response:
