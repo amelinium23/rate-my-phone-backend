@@ -1,14 +1,9 @@
-import json
-import requests as r
-
-from logging import Logger
+from . import DEVICE
 from typing import Dict, List, Optional
-from flask import Response, current_app, jsonify
+from flask import Response, jsonify
 from cachetools import TTLCache, cached
 from device.model.device import Device, DeviceResponse
-from . import DEVICE
-
-logger = Logger(__name__)
+from utils.gsm_arena_utils import get_from_gsm_arena, post_to_gsm_arena
 
 
 @DEVICE.route('/')
@@ -32,9 +27,8 @@ def get_device_by_brand(brand_key: str) -> Response:
   Returns:
       Dict: all data from gsm arena api with devices sorted by brand
   """
-  logger.info(f"Getting devices by brand!")
   devices = get_device_list_by_brands()
-  return jsonify(get_devices_by_key(brand_key, devices))
+  return jsonify(_get_devices_by_key(brand_key, devices))
 
 
 @DEVICE.route('/recommended')
@@ -62,7 +56,7 @@ def get_details_of_device(device_key: str) -> Response:
   return jsonify(device_detail)
 
 
-def get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Optional['Device']:
+def _get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Optional['Device']:
   """Get device by key
 
   Returns:
@@ -74,7 +68,7 @@ def get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Option
   return None
 
 
-def parse_to_device_dataclass(device_list: List) -> List['Device']:
+def _parse_to_device_dataclass(device_list: List) -> List['Device']:
   """Function for parsing json object to device dataclass
 
   Returns:
@@ -94,23 +88,20 @@ def parse_response(data: List[Dict]) -> List[DeviceResponse]:
   """
   data_list = []
   for res in data:
-    devices = parse_to_device_dataclass(res.get('device_list', []))
+    devices = _parse_to_device_dataclass(res.get('device_list', []))
     res['device_list'] = devices
     data_list.append(DeviceResponse(**res))
   return data_list
 
 
-@cached(cache=TTLCache(maxsize=1000, ttl=3000))
+@cached(cache=TTLCache(maxsize=1000, ttl=14400))
 def get_device_list_by_brands() -> List[DeviceResponse]:
   """Function for getting parsed response from GSMARENA API
 
   Returns:
       List[DeviceResponse]: Data with responses
   """
-  logger.info("Getting data from GSM ARENA API")
-  GSM_ARENA_API_URL: str = current_app.config.get('GSM_ARENA_API_URL', '')
-  req = r.get(GSM_ARENA_API_URL, {'route': 'device-list'})
-  data: Dict = req.json()
+  data: Dict = get_from_gsm_arena({'route': 'device-list'})
   json_data = data.get('data', {})
   return parse_response(json_data)
 
@@ -124,9 +115,7 @@ def get_device_detail_from_api(device_key: str) -> Dict:
   Returns:
       Dict: device detail
   """
-  GSM_ARENA_API_URL: str = current_app.config.get('GSM_ARENA_API_URL', '')
-  req = r.post(GSM_ARENA_API_URL, json.dumps({'route': 'device-detail', 'key': device_key}))
-  data: Dict = req.json()
+  data: Dict = post_to_gsm_arena({'route': 'device-detail', 'key': device_key})
   return data.get('data', {})
 
 
@@ -136,7 +125,5 @@ def get_recommended_devices() -> Dict:
   Returns:
       Dict: dict with all data
   """
-  GSM_ARENA_API_URL: str = current_app.config.get('GSM_ARENA_API_URL', '')
-  req = r.get(f"{GSM_ARENA_API_URL}?route=recommended")
-  data: Dict = req.json()
+  data: Dict = get_from_gsm_arena({}, "?route=recommended")
   return data.get('data', {})
