@@ -21,9 +21,4 @@ register_blueprints()
 
 @app.route('/')
 def hello_page() -> Response:
-  """Index endpoint for api
-
-  Returns:
-      Response
-  """
   return Response('Welcome to rate my phone api!')

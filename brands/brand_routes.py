@@ -1,7 +1,6 @@
 from typing import Dict, List
 from flask import Response, jsonify
-import requests as r
-from . import BRANDS
+from brands import BRANDS
 from .model.brand import Brand
 from cachetools import TTLCache, cached
 from utils.gsm_arena_utils import get_from_gsm_arena
