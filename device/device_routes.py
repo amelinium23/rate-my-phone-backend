@@ -1,8 +1,9 @@
+from device.utils.response_parser import _get_devices_by_key, _parse_response
 from . import DEVICE
-from typing import Dict, List, Optional
+from typing import Dict, List
 from flask import Response, jsonify
 from cachetools import TTLCache, cached
-from device.model.device import Device, DeviceResponse
+from device.model.device import DeviceResponse
 from utils.gsm_arena_utils import get_from_gsm_arena, post_to_gsm_arena
 
 
@@ -54,36 +55,6 @@ def get_details_of_device(device_key: str) -> Response:
   """
   device_detail = get_device_detail_from_api(device_key)
   return jsonify(device_detail)
-
-
-def _get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Optional['Device']:
-  """Get device by key
-
-  Returns:
-      Optional['Device']: device object
-  """
-  for device in brands:
-    if device.key == brand_key:
-      return device.device_list
-  return None
-
-
-def _parse_to_device_dataclass(device_list: List) -> List['Device']:
-  """Function for parsing json object to device dataclass
-
-  Returns:
-      List['Device']: list of parsed devices
-  """
-  return [Device(**device) for device in device_list]
-
-
-def _parse_response(data: List[Dict]) -> List[DeviceResponse]:
-  data_list = []
-  for res in data:
-    devices = _parse_to_device_dataclass(res.get('device_list', []))
-    res['device_list'] = devices
-    data_list.append(DeviceResponse(**res))
-  return data_list
 
 
 @cached(cache=TTLCache(maxsize=1000, ttl=14400))

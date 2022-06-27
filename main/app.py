@@ -1,7 +1,7 @@
 from flask import Flask, Response, render_template
 from brands.brand_routes import BRANDS
 from device.device_routes import DEVICE
-from forum import FORUM
+from forum.forum_routes import FORUM
 from user.user_routes import USER
 from .config import Config
 from api.api_routes import API

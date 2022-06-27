@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from math import inf
 from random import randint
 
 
@@ -7,4 +6,4 @@ from random import randint
 class Post:
  title: str
  description: str
- id: int = randint(0, inf)
+ id: int = randint(0, 10000000000000000)

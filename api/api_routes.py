@@ -9,7 +9,7 @@ def _get_list_routes() -> List[str]:
   for rule in current_app.url_map.iter_rules():
     options = {}
     for arg in rule.arguments:
-        options[arg] = "[{0}]".format(arg)
+        options[arg] = f"[{arg}]"
     methods = ','.join(rule.methods)
     url = url_for(rule.endpoint, **options)
     line = urllib.parse.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
