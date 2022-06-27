@@ -7,7 +7,7 @@ from firebase_admin.auth import get_user, create_user, update_user, delete_user
 from user.model.user import User
 
 
-@USER.route('/user', methods=['GET'])
+@USER.route('/', methods=['GET'])
 def get_user_by_id() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
@@ -18,7 +18,7 @@ def get_user_by_id() -> Response:
     return Response(str(e), status=500)
 
 
-@USER.route('/user', methods=['POST'])
+@USER.route('/', methods=['POST'])
 def create_new_user() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
@@ -29,7 +29,7 @@ def create_new_user() -> Response:
     return Response(str(e), status=500)
 
 
-@USER.route('/user', methods=['PUT'])
+@USER.route('/', methods=['PUT'])
 def edit_user() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
@@ -43,7 +43,7 @@ def edit_user() -> Response:
     return Response(str(e), status=500)
 
 
-@USER.route('/user', methods=['DELETE'])
+@USER.route('/', methods=['DELETE'])
 def delete_firebase_user() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)

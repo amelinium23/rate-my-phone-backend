@@ -1,3 +1,4 @@
+import urllib
 from typing import List
 from flask import render_template, current_app, url_for
 from . import API
@@ -6,7 +7,6 @@ from . import API
 def _get_list_routes() -> List[str]:
   output = []
   for rule in current_app.url_map.iter_rules():
-    import urllib
     options = {}
     for arg in rule.arguments:
         options[arg] = "[{0}]".format(arg)
@@ -20,7 +20,6 @@ def _get_list_routes() -> List[str]:
 @API.route('/')
 def api_documentation():
   """Endpoint for displaying endpoints
-  
   Returns:
       Response
   """
