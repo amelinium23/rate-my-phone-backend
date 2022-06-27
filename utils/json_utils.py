@@ -1,8 +1,9 @@
-import dataclasses, json
+import json
 from typing import Any
+from dataclasses import is_dataclass, asdict
 
 class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, o: object) -> Any:
-        if dataclasses.is_dataclass(o):
-            return dataclasses.asdict(o)
+        if is_dataclass(o):
+            return asdict(o)
         return super().default(o)

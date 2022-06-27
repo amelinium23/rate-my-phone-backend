@@ -77,15 +77,7 @@ def _parse_to_device_dataclass(device_list: List) -> List['Device']:
   return [Device(**device) for device in device_list]
 
 
-def parse_response(data: List[Dict]) -> List[DeviceResponse]:
-  """Parse response from api to datclas
-
-  Args:
-      data (List[Dict]): get list of dicts with response
-
-  Returns:
-      List[DeviceResponse]: getting devices with brands name
-  """
+def _parse_response(data: List[Dict]) -> List[DeviceResponse]:
   data_list = []
   for res in data:
     devices = _parse_to_device_dataclass(res.get('device_list', []))
@@ -103,7 +95,7 @@ def get_device_list_by_brands() -> List[DeviceResponse]:
   """
   data: Dict = get_from_gsm_arena({'route': 'device-list'})
   json_data = data.get('data', {})
-  return parse_response(json_data)
+  return _parse_response(json_data)
 
 
 def get_device_detail_from_api(device_key: str) -> Dict:
