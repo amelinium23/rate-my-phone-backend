@@ -19,10 +19,6 @@ def _get_list_routes() -> List[str]:
 
 @API.route('/')
 def api_documentation():
-  """Endpoint for displaying endpoints
-  Returns:
-      Response
-  """
   all_endpoints: List = _get_list_routes()
   spitted_end_point = [[split for split in url.split(" ") if split != ""] for url in all_endpoints]
   kwargs = {

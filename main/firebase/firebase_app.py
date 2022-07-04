@@ -1,6 +1,6 @@
 import os
-from firebase_admin import initialize_app, credentials, App, firestore
 
+from firebase_admin import initialize_app, credentials, App, firestore
 
 firebase_app: App = initialize_app(credentials.Certificate(
     os.getenv("GOOGLE_APPLICATION_CREDENTIALS")))

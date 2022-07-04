@@ -1,8 +1,10 @@
 import json
+
+from device.model.device import Device
 from . import USER
 from typing import Any, Dict
 from flask import Response, jsonify, request
-from user.utils.firebase_util import get_user_mapping
+from user.utils.firebase_util import get_user_mapping, update_device_of_user
 from firebase_admin.auth import get_user, create_user, update_user, delete_user
 from user.model.user import User
 
@@ -51,5 +53,18 @@ def delete_firebase_user() -> Response:
     assert uid is not None, 'uid param is required'
     delete_user(uid)
     return Response(f"Deleted user with uid: {uid}", status=200)
+  except Exception as e:
+    return Response(str(e), status=500)
+
+
+@USER.route('/device', methods=['PUT'])
+def edit_user_device() -> Response:
+  try:
+    data: Dict[str, Any] = json.loads(request.data)
+    uid = data.get('uid')
+    assert uid is not None, 'uid param is required'
+    new_device = Device(**data.get('device', {}))
+    update_device_of_user(uid, new_device)
+    return Response("Not implemented", status=500)
   except Exception as e:
     return Response(str(e), status=500)
