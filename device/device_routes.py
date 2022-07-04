@@ -17,7 +17,7 @@ def get_all_devices_by_brand() -> Response:
     return Response(str(e), status=500)
 
 
-@DEVICE.route('/')
+@DEVICE.route('/brand')
 def get_device_by_brand() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
