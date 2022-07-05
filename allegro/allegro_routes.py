@@ -1,4 +1,3 @@
-from allegro.utils.allegro_authorization import get_access_token
 from . import ALLEGRO
 
 
