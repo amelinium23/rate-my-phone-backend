@@ -1,7 +1,10 @@
+from logging import getLogger
 import urllib
 from typing import List
 from flask import render_template, current_app, url_for
 from . import API
+
+logger = getLogger(__name__)
 
 
 def _get_list_routes() -> List[str]:
@@ -9,7 +12,7 @@ def _get_list_routes() -> List[str]:
   for rule in current_app.url_map.iter_rules():
     options = {}
     for arg in rule.arguments:
-        options[arg] = f"[{arg}]"
+      options[arg] = f"[{arg}]"
     methods = ','.join(rule.methods)
     url = url_for(rule.endpoint, **options)
     line = urllib.parse.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
@@ -24,4 +27,5 @@ def api_documentation():
   kwargs = {
       "endpoints": spitted_end_point
   }
+  logger.info(f"[API]: Rendered API documentation with {kwargs}")
   return render_template("api_doc.html", endpoints=kwargs)
