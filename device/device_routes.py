@@ -31,7 +31,7 @@ def get_device_by_brand() -> Response:
 @DEVICE.route('/recommended')
 def get_recommended_devices() -> Response:
   try:
-    recommended = get_recommended_devices()
+    recommended = _get_recommended_devices()
     return jsonify(recommended)
   except Exception as e:
     return Response(str(e), status=500)
@@ -60,6 +60,6 @@ def get_device_detail_from_api(device_key: str) -> Dict:
   return data.get('data', {})
 
 
-def get_recommended_devices() -> Dict:
+def _get_recommended_devices() -> Dict:
   data: Dict = get_from_gsm_arena({}, "?route=recommended")
   return data.get('data', {})

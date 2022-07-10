@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from device.model.device import Device, DeviceResponse
 
 
-def get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Optional['Device']:
+def get_devices_by_key(brand_key: str, brands: List['DeviceResponse']) -> Optional[List['Device']]:
   for device in brands:
     if device.key == brand_key:
       return device.device_list

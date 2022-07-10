@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from flask import Response, jsonify, request
 from brands import BRANDS
 from .model.brand import Brand
@@ -8,7 +8,7 @@ from utils.gsm_arena_utils import get_from_gsm_arena
 
 
 @BRANDS.route('/', methods=['GET'])
-def _get_brand_list() -> Response:
+def get_brand_list() -> Response:
   try:
     brands = _get_brand_list()
     return jsonify(brands)
@@ -26,7 +26,8 @@ def get_brand_key() -> Response:
   except Exception as e:
     return Response(str(e), status=500)
 
-def _get_brand_by_key(brands: List['Brand'], key: str) -> 'Brand':
+
+def _get_brand_by_key(brands: List['Brand'], key: str) -> Optional['Brand']:
   for brand in brands:
     if brand.key == key:
       return brand

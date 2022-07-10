@@ -26,5 +26,5 @@ register_blueprints()
 
 
 @app.route('/')
-def hello_page() -> Response:
+def hello_page() -> str:
   return render_template('index.html')
