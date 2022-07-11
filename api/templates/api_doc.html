@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 {% set endpoints = endpoints.endpoints %}
 <html lang="en">
   <head>
@@ -11,21 +10,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('api.static', filename='css/apiStyle.css') }}" />
     <title>Api Documentation</title>
   </head>
-  <style>
-    body {
-      font-family: 'Roboto', monospace, sans-serif;
-    }
-  </style>
   <body>
     <div class="container-fluid" style="padding: 2vh;">
-      <h1 style="text-align: center;">Endpoints</h1>
+      <h1 class="headerStyle">Endpoints</h1>
       <div class="container" style="align-items: center;">
-        <h4 style="text-align: center;">All endpoints of rate my phone</h4>
+        <h4 class="headerStyle">All endpoints of rate my phone</h4>
         <table class="table table-hover table-stripped table-bordered">
           <thead>
-            <tr class="table-primary">
+            <tr>
               <th>Function name</th>
               <th>Methods</th>
               <th>URL</th>

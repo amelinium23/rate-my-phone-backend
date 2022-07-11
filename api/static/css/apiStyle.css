@@ -1,0 +1,8 @@
+* {
+ font-family: 'Roboto', 'Courier New', Courier, monospace;
+ padding: 0.25vh 0.5vw;
+}
+
+.headerStyle {
+ text-align: center;
+}
