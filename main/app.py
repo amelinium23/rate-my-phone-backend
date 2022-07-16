@@ -1,6 +1,6 @@
 from flask import Flask, Response, render_template
 
-from api.api_routes import API
+from docs.docs_routes import DOCS
 from allegro.allegro_routes import ALLEGRO
 from brands.brand_routes import BRANDS
 from forum.forum_routes import FORUM
@@ -17,7 +17,7 @@ def register_blueprints():
   app.register_blueprint(BRANDS)
   app.register_blueprint(DEVICE)
   app.register_blueprint(USER)
-  app.register_blueprint(API)
+  app.register_blueprint(DOCS)
   app.register_blueprint(FORUM)
   app.register_blueprint(ALLEGRO)
 

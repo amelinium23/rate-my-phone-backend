@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% set endpoints = endpoints.endpoints %}
 <html lang="en">
 
 <head>
@@ -16,21 +16,33 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-  <title>Rate my phone API</title>
+  <link rel="stylesheet" href="{{ url_for('docs.static', filename='css/apiStyle.css') }}" />
+  <title>Api Documentation</title>
 </head>
 
 <body>
-  <div class="container centered-container">
-    <h3 class="heading">Welcome to rate my phone API!</h3>
-    <div class="row">
-      <div class="col-md-6">
-        <h4>This is a starting page of rate my phone API.</h4>
-        <p>If you want start to use api, please checkout documentation.</p>
-      </div>
-    </div>
-    <div class="container">
-      <a href="{{ url_for('docs.api_documentation') }}" class="btn btn-primary">Documentation</a>
+  <div class="container-fluid" style="padding: 2vh;">
+    <h1 class="headerStyle">Endpoints</h1>
+    <div class="container" style="align-items: center;">
+      <h4 class="headerStyle">All endpoints of rate my phone</h4>
+      <table class="table table-hover table-stripped table-bordered">
+        <thead>
+          <tr>
+            <th>Function name</th>
+            <th>Methods</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for url in endpoints %}
+          <tr>
+            <td>{{url[0]}}</td>
+            <td>{{", ".join(url[1].split(","))}}</td>
+            <td>{{url[2]}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </body>
