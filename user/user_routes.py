@@ -73,6 +73,6 @@ def edit_user_device() -> Response:
     new_device = Device(**data.get('device', {}))
     update_device_of_user(uid, new_device)
     logger.info(f"[USER]: Edited user device with uid {uid}")
-    return Response("Not implemented", status=500)
+    return Response(f"Updated user {uid} device", status=500)
   except Exception as e:
     return Response(str(e), status=500)

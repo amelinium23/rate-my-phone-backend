@@ -34,7 +34,7 @@ def _get_brand_by_key(brands: List['Brand'], key: str) -> Optional['Brand']:
   return None
 
 
-def _parse_brands(data: Dict) -> List[Brand]:
+def _parse_brands(data: Dict[str, Any]) -> List[Brand]:
   return [Brand(**brand) for brand in data.get('data', {})]
 
 
