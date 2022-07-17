@@ -2,13 +2,13 @@ import json
 
 from typing import Any, Dict
 from allegro.utils.allegro_authorization import get_access_token
-from allegro.utils.allegro_api_utils import get_categories, get_categories_by_parent_id, search_listings_in_allegro
+from allegro.utils.allegro_api_utils import get_categories, get_categories_by_parent_id, search_listings_in_allegro, get_categories_by_id
 from . import ALLEGRO
 from flask import Response, jsonify, request
 
 
-@ALLEGRO.route('/')
-def search_listings_in_allegro() -> str:
+@ALLEGRO.route('/listings')
+def search_listings() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
     token: Dict[str, Any] = get_access_token()
@@ -16,7 +16,7 @@ def search_listings_in_allegro() -> str:
     listings = search_listings_in_allegro(device_name, token.get('access_token', ''))
     return jsonify(listings)
   except Exception as e:
-    return str(e)
+    return Response(str(e), status=500)
 
 
 @ALLEGRO.route('/categories', methods=['GET'])
@@ -36,6 +36,18 @@ def get_category_by_parent_id() -> Response:
     parent_id: str = data.get('parent_id', '')
     token: Dict[str, Any] = get_access_token()
     categories = get_categories_by_parent_id(token.get('access_token', ''), parent_id)
+    return jsonify(categories)
+  except Exception as e:
+    return Response(str(e), status=500)
+
+
+@ALLEGRO.route('/categories/id', methods=['GET'])
+def get_category_by_id() -> Response:
+  try:
+    data: Dict[str, Any] = json.loads(request.data)
+    category_id: str = data.get('category_id', '')
+    token: Dict[str, Any] = get_access_token()
+    categories = get_categories_by_id(token.get('access_token', ''), category_id)
     return jsonify(categories)
   except Exception as e:
     return Response(str(e), status=500)

@@ -1,7 +1,7 @@
 import json
-from logging import getLogger
-
 from device.model.device import Device
+
+from logging import getLogger
 from . import USER
 from typing import Any, Dict
 from flask import Response, jsonify, request
