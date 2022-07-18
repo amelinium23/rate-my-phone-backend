@@ -1,9 +1,12 @@
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from flask import Response, request, current_app
 from forum import FORUM
 from dataclasses import asdict
 from forum.model.post import Post
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 @FORUM.route('/post', methods=['GET'])
@@ -15,6 +18,7 @@ def get_all_post() -> Response:
     db = current_app.config.get('FIRESTORE', None)
     doc = db.collection('posts').document(user_uid).get().to_dict()
     posts = doc.get('posts', [])
+    logger.info(f"[FORUM]: Get all posts for user {user_uid}!")
     return Response(json.dumps(posts), status=200)
   except Exception as e:
     return Response(str(e), status=500)
@@ -31,6 +35,7 @@ def create_new_post() -> Response:
   posts = new_doc.get().to_dict().get('posts', [])
   posts.append(asdict(new_post))
   db.collection('posts').document(user_uid).set({'posts': posts})
+  logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
   return Response(f"Created new document id: {new_doc}", status=200)
  except Exception as e:
   return Response(str(e), status=500)
@@ -45,9 +50,12 @@ def delete_post() -> Response:
     post_id: int = data.get('post_id', 0)
     db = current_app.config.get('FIRESTORE', None)
     doc = db.collection('posts').document(user_uid).get().to_dict()
-    posts: List['Post'] = doc.get('posts', [])
-    posts.remove(post_id)
+    posts: List[Dict[str, Any]] = doc.get('posts', [])
+    post: Optional[Dict[str, Any]] = _find_post_by_id(post_id, posts)
+    assert post is not None, f"Post with id: {post_id} not found!"
+    posts.remove(post)
     db.collection('posts').document(user_uid).set({'posts': posts})
+    logger.info(f"[FORUM]: Deleted post with id: {post_id}!")
     return Response(f"Removed post with id: {post_id}.", status=200)
   except Exception as e:
     return Response(str(e), status=500)
@@ -62,13 +70,25 @@ def edit_post() -> Response:
     post_id: int = data.get('post_id', 0)
     db = current_app.config.get('FIRESTORE', None)
     doc = db.collection('posts').document(user_uid).get().to_dict()
-    posts: List['Post'] = doc.get('posts', [])
-    for index, post in enumerate(posts):
-      if post_id == post.id:
-        posts[index] = asdict(
-            Post(title=data.get('title', ''),
-                 description=data.get('description', '')))
-    db.collection('posts').document(user_uid).set({'posts': posts})
+    posts: List[Dict[str, Any]] = doc.get('posts', [])
+    edited_posts: List[Dict[str, Any]] = _edit_post(posts, post_id, data)
+    logger.info(f"[FORUM]: Edited post with id: {post_id}!")
+    db.collection('posts').document(user_uid).set({'posts': edited_posts})
     return Response(f"Edited post with id: {post_id}.", status=200)
   except Exception as e:
     return Response(str(e), status=500)
+
+
+def _find_post_by_id(post_id: int, posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+  for post in posts:
+    if post_id == post.get('id', 0):
+      return post
+  return None
+
+
+def _edit_post(posts: List[Dict[str, Any]],
+               post_id: int, edited_post: Dict[str, Any]) -> List[Dict[str, Any]]:
+  for index, post in enumerate(posts):
+    if post_id == post.get('id', 0):
+      posts[index] = edited_post
+  return posts
