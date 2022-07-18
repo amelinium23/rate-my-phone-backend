@@ -1,6 +1,6 @@
 import json
 from typing import Any, Dict, List, Optional
-from flask import Response, request, current_app
+from flask import Response, request, current_app, jsonify
 from forum import FORUM
 from dataclasses import asdict
 from forum.model.post import Post
@@ -19,7 +19,7 @@ def get_all_post() -> Response:
     doc = db.collection('posts').document(user_uid).get().to_dict()
     posts = doc.get('posts', [])
     logger.info(f"[FORUM]: Get all posts for user {user_uid}!")
-    return Response(json.dumps(posts), status=200)
+    return jsonify(posts)
   except Exception as e:
     return Response(str(e), status=500)
 
