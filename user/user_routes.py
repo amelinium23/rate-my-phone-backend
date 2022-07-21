@@ -16,9 +16,11 @@ logger = getLogger(__name__)
 def get_user_by_id() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
-    uid = get_user(data.get('uid', ''))
-    user_instance = User(**get_user_mapping(uid))
-    logger.info(f"[USER]: Get user with uid {uid}")
+    uid = data.get('uid')
+    assert uid is not None, 'uid param is required'
+    user = get_user(uid)
+    user_instance = User(**get_user_mapping(user))  # type: ignore
+    logger.info(f"[USER]: Get user with uid {user.uid}")
     return jsonify(user_instance)
   except Exception as e:
     return Response(str(e), status=500)
@@ -29,7 +31,7 @@ def create_new_user() -> Response:
   try:
     data: Dict[str, Any] = json.loads(request.data)
     user = create_user(**data)
-    user_instance = User(**get_user_mapping(user))
+    user_instance = User(**get_user_mapping(user))  # type: ignore
     logger.info(f"[USER]: Created new user with uid {user_instance.uid}")
     return jsonify(user_instance)
   except Exception as e:
@@ -44,7 +46,7 @@ def edit_user() -> Response:
     assert uid is not None, 'uid param is required'
     rest_data = {k: v for k, v in data.items() if k != 'uid'}
     user = update_user(uid, **rest_data)
-    user_instance = User(**get_user_mapping(user))
+    user_instance = User(**get_user_mapping(user))  # type: ignore
     logger.info(f"[USER]: Edited user with uid {user_instance.uid}")
     return jsonify(user_instance)
   except Exception as e:
