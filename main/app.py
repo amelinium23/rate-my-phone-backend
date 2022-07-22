@@ -12,7 +12,7 @@ from .config import Config
 
 app: Flask = Flask(__name__, template_folder="templates")
 app.config.from_object(Config())
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 def register_blueprints():

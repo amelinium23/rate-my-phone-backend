@@ -32,6 +32,7 @@ def get_device_by_brand() -> Response:
 def get_recommended_devices() -> Response:
   try:
     recommended = _get_recommended_devices()
+    print(recommended)
     return jsonify(recommended)
   except Exception as e:
     return Response(str(e), status=500)
@@ -60,6 +61,10 @@ def get_device_detail_from_api(device_key: str) -> Dict:
   return data.get('data', {})
 
 
-def _get_recommended_devices() -> Dict:
+def _get_recommended_devices() -> List[Dict[str, Any]]:
   data: Dict = get_from_gsm_arena({}, "?route=recommended")
-  return data.get('data', {})
+  return _parse_recommended_devices_to_list(data.get('data', {}))
+
+
+def _parse_recommended_devices_to_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:
+  return [value for key, value in data.items() if key in ['recommended_1', 'recommended_2']]
