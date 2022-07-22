@@ -1,4 +1,5 @@
-from flask import Flask, Response, render_template
+from flask import Flask, render_template
+from flask_cors import CORS
 
 from docs.docs_routes import DOCS
 from allegro.allegro_routes import ALLEGRO
@@ -11,6 +12,7 @@ from .config import Config
 
 app: Flask = Flask(__name__, template_folder="templates")
 app.config.from_object(Config())
+CORS(app)
 
 
 def register_blueprints():
