@@ -61,6 +61,7 @@ def get_device_detail_from_api(device_key: str) -> Dict:
   return data.get('data', {})
 
 
+@cached(cache=TTLCache(maxsize=1000, ttl=14400))
 def _get_recommended_devices() -> List[Dict[str, Any]]:
   data: Dict = get_from_gsm_arena({}, "?route=recommended")
   return _parse_recommended_devices_to_list(data.get('data', {}))
