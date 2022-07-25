@@ -32,7 +32,6 @@ def get_device_by_brand() -> Response:
 def get_recommended_devices() -> Response:
   try:
     recommended = _get_recommended_devices()
-    print(recommended)
     return jsonify(recommended)
   except Exception as e:
     return Response(str(e), status=500)
@@ -49,6 +48,16 @@ def get_details_of_device() -> Response:
     return Response(str(e), status=500)
 
 
+@DEVICE.route('/search', methods=['GET'])
+def get_search_result() -> Response:
+  try:
+    data: Dict[str, Any] = json.loads(request.data)
+    query: str = data.get('query', '')
+    return jsonify(_get_search_result(query))
+  except Exception as e:
+    return Response(str(e), status=500)
+
+
 @cached(cache=TTLCache(maxsize=1000, ttl=14400))
 def get_device_list_by_brands() -> List[DeviceResponse]:
   data: Dict = get_from_gsm_arena({'route': 'device-list'})
@@ -56,8 +65,14 @@ def get_device_list_by_brands() -> List[DeviceResponse]:
   return parse_response(json_data)
 
 
-def get_device_detail_from_api(device_key: str) -> Dict:
+def get_device_detail_from_api(device_key: str) -> Dict[str, Any]:
   data: Dict = post_to_gsm_arena({'route': 'device-detail', 'key': device_key})
+  return data.get('data', {})
+
+
+@cached(cache=TTLCache(maxsize=1000, ttl=14400))
+def _get_search_result(query: str) -> Dict[str, Any]:
+  data: Dict[str, Any] = post_to_gsm_arena({"route": "search", "query": query})
   return data.get('data', {})
 
 
