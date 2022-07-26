@@ -17,11 +17,11 @@ def get_all_devices_by_brand() -> Response:
     return Response(str(e), status=500)
 
 
-@DEVICE.route('/brand')
+@DEVICE.route('/brand', methods=['GET'])
 def get_device_by_brand() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
-    brand_key: str = data.get('brand_key', '')
+    params: Dict[str, str] = request.args.to_dict()
+    brand_key: str = params.get('brand_key', '')
     devices = get_device_list_by_brands()
     return jsonify(get_devices_by_key(brand_key, devices))
   except Exception as e:
