@@ -12,7 +12,7 @@ logger = getLogger(__name__)
 @FORUM.route('/post', methods=['GET'])
 def get_all_post() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
+    data: Dict[str, Any] = request.args.to_dict()
     user_uid: str = data.get('uid', '')
     assert user_uid is not None, 'uid param is required'
     db = current_app.config.get('FIRESTORE', None)

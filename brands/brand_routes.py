@@ -19,7 +19,7 @@ def get_brand_list() -> Response:
 @BRANDS.route('/', methods=['GET'])
 def get_brand_key() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
+    data: Dict[str, Any] = request.args.to_dict()
     key: str = data.get('key', '')
     brands: List['Brand'] = _get_brand_list()
     return jsonify(_get_brand_by_key(brands, key))

@@ -40,8 +40,8 @@ def get_recommended_devices() -> Response:
 @DEVICE.route('/details', methods=['GET'])
 def get_details_of_device() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
-    device_key: str = data.get('device_key', '')
+    params: Dict[str, str] = request.args.to_dict()
+    device_key: str = params.get('device_key', '')
     device_detail = get_device_detail_from_api(device_key)
     return jsonify(device_detail)
   except Exception as e:
@@ -51,9 +51,20 @@ def get_details_of_device() -> Response:
 @DEVICE.route('/search', methods=['GET'])
 def get_search_result() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
-    query: str = data.get('query', '')
+    params: Dict[str, str] = request.args.to_dict()
+    query: str = params.get('query', '')
     return jsonify(_get_search_result(query))
+  except Exception as e:
+    return Response(str(e), status=500)
+
+
+@DEVICE.route('/comparison', methods=['POST'])
+def get_comparison_result() -> Response:
+  try:
+    data: Dict[str, Any] = json.loads(request.data)
+    device_ids: List[int] = data.get('device_ids', [])
+    comparison = _get_comparison_of_devices(device_ids)
+    return jsonify(comparison)
   except Exception as e:
     return Response(str(e), status=500)
 
@@ -80,6 +91,12 @@ def _get_search_result(query: str) -> Dict[str, Any]:
 def _get_recommended_devices() -> List[Dict[str, Any]]:
   data: Dict = get_from_gsm_arena({}, "?route=recommended")
   return _parse_recommended_devices_to_list(data.get('data', {}))
+
+
+def _get_comparison_of_devices(device_ids: List[int]) -> Dict[str, Any]:
+  data: Dict[str, Any] = post_to_gsm_arena(
+      {"route": "compare", "device_ids": ','.join(str(x) for x in device_ids)})
+  return data.get('data', {})
 
 
 def _parse_recommended_devices_to_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:

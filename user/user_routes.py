@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 @USER.route('/', methods=['GET'])
 def get_user_by_id() -> Response:
   try:
-    data: Dict[str, Any] = json.loads(request.data)
+    data: Dict[str, Any] = request.args.to_dict()
     uid = data.get('uid')
     assert uid is not None, 'uid param is required'
     user = get_user(uid)
