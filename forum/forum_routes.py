@@ -6,11 +6,23 @@ from dataclasses import asdict
 from forum.model.post import Post
 from logging import getLogger
 
+
 logger = getLogger(__name__)
 
 
+@FORUM.route('/', methods=['GET'])
+def get_all_posts() -> Response:
+  try:
+    db = current_app.config.get('FIRESTORE', None)
+    doc = db.collection('posts').get()
+    res = _parse_documents_to_list(doc)
+    return jsonify(res)
+  except Exception as e:
+    return Response(str(e), status=500)
+
+
 @FORUM.route('/post', methods=['GET'])
-def get_all_post() -> Response:
+def get_all_post_by_user() -> Response:
   try:
     data: Dict[str, Any] = request.args.to_dict()
     user_uid: str = data.get('uid', '')
@@ -23,22 +35,24 @@ def get_all_post() -> Response:
   except Exception as e:
     return Response(str(e), status=500)
 
+
 @FORUM.route('/post', methods=['POST'])
 def create_new_post() -> Response:
- try:
-  data: Dict[str, Any] = json.loads(request.data)
-  user_uid: str = data.get('uid', '')
-  assert user_uid is not None, 'uid param is required'
-  db = current_app.config.get('FIRESTORE', None)
-  new_doc = db.collection('posts').document(user_uid)
-  new_post = Post(title=data.get('title', ''), description=data.get('description', ''))
-  posts = new_doc.get().to_dict().get('posts', [])
-  posts.append(asdict(new_post))
-  db.collection('posts').document(user_uid).set({'posts': posts})
-  logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
-  return Response(f"Created new document id: {new_doc}", status=200)
- except Exception as e:
-  return Response(str(e), status=500)
+  try:
+    data: Dict[str, Any] = json.loads(request.data)
+    files = request.files.get('file', None)
+    user_uid: str = data.get('uid', '')
+    assert user_uid is not None, 'uid param is required'
+    db = current_app.config.get('FIRESTORE', None)
+    new_doc = db.collection('posts').document(user_uid)
+    new_post = Post(title=data.get('title', ''), description=data.get('description', ''))
+    posts = new_doc.get().to_dict().get('posts', [])
+    posts.append(asdict(new_post))
+    db.collection('posts').document(user_uid).set({'posts': posts})
+    logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
+    return Response(f"Created new document id: {new_doc}", status=200)
+  except Exception as e:
+    return Response(str(e), status=500)
 
 
 @FORUM.route('/post', methods=['DELETE'])
@@ -91,4 +105,12 @@ def _edit_post(posts: List[Dict[str, Any]],
   for index, post in enumerate(posts):
     if post_id == post.get('id', 0):
       posts[index] = edited_post
+  return posts
+
+
+def _parse_documents_to_list(collection) -> List:
+  posts = []
+  for doc in collection:
+    doc_posts = doc.get('posts') if doc.get('posts') is not None else []
+    posts.append({doc.id: doc_posts})
   return posts
