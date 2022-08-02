@@ -45,7 +45,8 @@ def create_new_post() -> Response:
     assert user_uid is not None, 'uid param is required'
     db = current_app.config.get('FIRESTORE', None)
     new_doc = db.collection('posts').document(user_uid)
-    new_post = Post(title=data.get('title', ''), description=data.get('description', ''))
+    new_post = Post(uid=user_uid, title=data.get('title', ''),
+                    description=data.get('description', ''))
     posts = new_doc.get().to_dict().get('posts', [])
     posts.append(asdict(new_post))
     db.collection('posts').document(user_uid).set({'posts': posts})
@@ -108,9 +109,10 @@ def _edit_post(posts: List[Dict[str, Any]],
   return posts
 
 
-def _parse_documents_to_list(collection) -> List:
+def _parse_documents_to_list(collection) -> List['Post']:
   posts = []
   for doc in collection:
     doc_posts = doc.get('posts') if doc.get('posts') is not None else []
-    posts.append({doc.id: doc_posts})
+    for post in doc_posts:
+      posts.append(post)
   return posts

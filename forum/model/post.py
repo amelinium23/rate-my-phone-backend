@@ -14,6 +14,7 @@ class Comment:
 class Post:
  title: str
  description: str
+ uid: str
  id: int = randint(0, 10000000000000000)
  votes: int = 0
  images: List[str] = field(default_factory=lambda: [])
