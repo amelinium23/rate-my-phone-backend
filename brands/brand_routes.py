@@ -1,4 +1,3 @@
-import json
 from typing import Any, Dict, List, Optional
 from flask import Response, jsonify, request
 from brands import BRANDS
@@ -10,8 +9,14 @@ from utils.gsm_arena_utils import get_from_gsm_arena
 @BRANDS.route('/', methods=['GET'])
 def get_brand_list() -> Response:
   try:
-    brands = _get_brand_list()
-    return jsonify(brands)
+    args: Dict[str, str] = request.args.to_dict()
+    page_number: int = int(args.get('page_number', 1))
+    page_size: int = int(args.get('page_size', 20))
+    brands: List[Brand] = _get_brand_list()
+    start_index: int = (page_number - 1) * page_size
+    end_index: int = start_index + page_size
+    result: Dict[str, Any] = {"brands": brands[start_index:end_index], 'total_pages': len(brands) // page_size}
+    return jsonify(result)
   except Exception as e:
     return Response(str(e), status=500)
 
