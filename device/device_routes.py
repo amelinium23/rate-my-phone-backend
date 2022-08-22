@@ -11,8 +11,16 @@ from utils.gsm_arena_utils import get_from_gsm_arena, post_to_gsm_arena
 @DEVICE.route('/')
 def get_all_devices_by_brand() -> Response:
   try:
+    args: Dict[str, str] = request.args.to_dict()
+    page_number: int = int(args.get('page_number', 1))
+    page_size: int = int(args.get('page_size', 10))
+    start_index: int = (page_number - 1) * page_size
+    end_index: int = start_index + page_size
     devices = get_device_list_by_brands()
-    return jsonify(devices)
+    result = {"data": devices[start_index:end_index],
+              "total": len(devices), "totalPhones": _count_phones(devices)}
+    print(result.get('totalPhones'))
+    return jsonify(result)
   except Exception as e:
     return Response(str(e), status=500)
 
@@ -101,3 +109,7 @@ def _get_comparison_of_devices(device_ids: List[int]) -> Dict[str, Any]:
 
 def _parse_recommended_devices_to_list(data: Dict[str, Any]) -> List[Dict[str, Any]]:
   return [value for key, value in data.items() if key in ['recommended_1', 'recommended_2']]
+
+
+def _count_phones(responses: List['DeviceResponse']) -> int:
+  return sum([len(response.device_list) for response in responses])

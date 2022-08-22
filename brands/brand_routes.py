@@ -15,7 +15,7 @@ def get_brand_list() -> Response:
     brands: List[Brand] = _get_brand_list()
     start_index: int = (page_number - 1) * page_size
     end_index: int = start_index + page_size
-    result: Dict[str, Any] = {"brands": brands[start_index:end_index], 'total_pages': len(brands) // page_size}
+    result: Dict[str, Any] = {"brands": brands[start_index:end_index], 'total_pages': len(brands)}
     return jsonify(result)
   except Exception as e:
     return Response(str(e), status=500)
