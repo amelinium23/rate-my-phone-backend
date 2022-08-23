@@ -10,5 +10,4 @@ class User:
   password: str = ""
   photo_url: str = ""
   display_name: str = ""
-  posts: List = field(default_factory=lambda: [])
   device: Optional[Device] = field(default_factory=lambda: None)

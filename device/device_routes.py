@@ -19,7 +19,6 @@ def get_all_devices_by_brand() -> Response:
     devices = get_device_list_by_brands()
     result = {"data": devices[start_index:end_index],
               "total": len(devices), "totalPhones": _count_phones(devices)}
-    print(result.get('totalPhones'))
     return jsonify(result)
   except Exception as e:
     return Response(str(e), status=500)
