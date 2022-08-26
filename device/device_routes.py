@@ -33,7 +33,11 @@ def get_device_by_brand() -> Response:
         params: Dict[str, str] = request.args.to_dict()
         brand_key: str = params.get("brand_key", "")
         devices = get_device_list_by_brands()
-        return jsonify(get_devices_by_key(brand_key, devices))
+        result = {
+            "data": get_devices_by_key(brand_key, devices),
+            "totalPhones": _count_phones(devices),
+            "total": len(devices)}
+        return jsonify(result)
     except Exception as e:
         return Response(str(e), status=500)
 
