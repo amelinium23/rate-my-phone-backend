@@ -37,7 +37,8 @@ def get_device_by_brand() -> Response:
         result = {
             "data": devices_from_brand,
             "totalPhones": _count_phones(devices),
-            "total": len(devices_from_brand) if devices_from_brand else 1 }
+            "total": len(devices_from_brand) if devices_from_brand else 1
+        }
         return jsonify(result)
     except Exception as e:
         return Response(str(e), status=500)
