@@ -38,26 +38,26 @@ def get_all_post_by_user() -> Response:
 
 @FORUM.route("/post", methods=["POST"])
 def create_new_post() -> Response:
-  try:
-      data: Dict[str, Any] = json.loads(request.data)
-      files = request.files.get("file", None)
-      user_uid: str = data.get("uid", "")
-      print(files)
-      assert user_uid is not None, "uid param is required"
-      db = current_app.config.get("FIRESTORE", None)
-      new_doc = db.collection("posts").document(user_uid)
-      new_post = Post(
-          uid=user_uid,
-          title=data.get("title", ""),
-          description=data.get("description", ""),
-      )
-      posts = new_doc.get().to_dict().get("posts", [])
-      posts.append(asdict(new_post))
-      db.collection("posts").document(user_uid).set({"posts": posts})
-      logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
-      return Response(f"Created new document id: {new_doc}", status=200)
-  except Exception as e:
-      return Response(str(e), status=500)
+    try:
+        data: Dict[str, Any] = json.loads(request.data)
+        files = request.files.get("file", None)
+        user_uid: str = data.get("uid", "")
+        print(files)
+        assert user_uid is not None, "uid param is required"
+        db = current_app.config.get("FIRESTORE", None)
+        new_doc = db.collection("posts").document(user_uid)
+        new_post = Post(
+            uid=user_uid,
+            title=data.get("title", ""),
+            description=data.get("description", ""),
+        )
+        posts = new_doc.get().to_dict().get("posts", [])
+        posts.append(asdict(new_post))
+        db.collection("posts").document(user_uid).set({"posts": posts})
+        logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
+        return Response(f"Created new document id: {new_doc}", status=200)
+    except Exception as e:
+        return Response(str(e), status=500)
 
 
 @FORUM.route("/post", methods=["DELETE"])
