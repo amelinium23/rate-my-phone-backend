@@ -1,6 +1,7 @@
 atomicwrites==1.4.1
 attrs==21.4.0
 autopep8==1.6.0
+black==22.6.0
 CacheControl==0.12.11
 cachetools==5.0.0
 certifi==2021.10.8
@@ -42,6 +43,7 @@ mypy==0.961
 mypy-extensions==0.4.3
 nodeenv==1.7.0
 packaging==21.3
+pathspec==0.9.0
 platformdirs==2.5.2
 pluggy==1.0.0
 pre-commit==2.20.0

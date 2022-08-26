@@ -6,6 +6,15 @@ on:
       - master
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "."
+          version: 22.6.0
   deploy:
     runs-on: ubuntu-latest
     steps:
