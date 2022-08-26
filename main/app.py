@@ -12,21 +12,21 @@ from .config import Config
 
 app: Flask = Flask(__name__, template_folder="templates")
 app.config.from_object(Config())
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resource={r"/*": {"origins": "*"}})
 
 
 def register_blueprints():
-  app.register_blueprint(BRANDS)
-  app.register_blueprint(DEVICE)
-  app.register_blueprint(USER)
-  app.register_blueprint(DOCS)
-  app.register_blueprint(FORUM)
-  app.register_blueprint(ALLEGRO)
+    app.register_blueprint(BRANDS)
+    app.register_blueprint(DEVICE)
+    app.register_blueprint(USER)
+    app.register_blueprint(DOCS)
+    app.register_blueprint(FORUM)
+    app.register_blueprint(ALLEGRO)
 
 
 register_blueprints()
 
 
-@app.route('/')
+@app.route("/")
 def hello_page() -> str:
-  return render_template('index.html')
+    return render_template("index.html")
