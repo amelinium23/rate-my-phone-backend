@@ -39,10 +39,10 @@ def get_all_post_by_user() -> Response:
 @FORUM.route("/post", methods=["POST"])
 def create_new_post() -> Response:
     try:
-        data: Dict[str, Any] = json.loads(request.data)
-        files = request.files.get("file", None)
+        print(request.form, request.files, sep='\n')
+        data: Dict[str, Any] = request.form
+        files = request.files.get('images', None)
         user_uid: str = data.get("uid", "")
-        print(files)
         assert user_uid is not None, "uid param is required"
         db = current_app.config.get("FIRESTORE", None)
         new_doc = db.collection("posts").document(user_uid)
