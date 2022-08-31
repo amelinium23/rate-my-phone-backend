@@ -5,6 +5,7 @@ from forum import FORUM
 from dataclasses import asdict
 from forum.model.post import Post
 from logging import getLogger
+from forum.utils.image_uploader import upload_to_images_storage
 
 
 logger = getLogger(__name__)
@@ -39,9 +40,9 @@ def get_all_post_by_user() -> Response:
 @FORUM.route("/post", methods=["POST"])
 def create_new_post() -> Response:
     try:
-        print(request.form, request.files, sep='\n')
         data: Dict[str, Any] = request.form
-        files = request.files.get('images', None)
+        client = current_app.config.get('GOOGLE_CLOUD_CLIENT', None)
+        files = request.files
         user_uid: str = data.get("uid", "")
         assert user_uid is not None, "uid param is required"
         db = current_app.config.get("FIRESTORE", None)
@@ -51,7 +52,10 @@ def create_new_post() -> Response:
             title=data.get("title", ""),
             description=data.get("description", ""),
         )
+        folder_name = f"{user_uid}/{new_post.id}"
         posts = new_doc.get().to_dict().get("posts", [])
+        file_names = upload_to_images_storage(files, folder_name, client)
+        new_post.images = file_names
         posts.append(asdict(new_post))
         db.collection("posts").document(user_uid).set({"posts": posts})
         logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
