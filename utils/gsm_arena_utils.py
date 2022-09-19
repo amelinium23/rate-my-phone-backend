@@ -1,8 +1,9 @@
+import os
 import json
 import requests as r
 from typing import Any, Dict
 
-GSM_ARENA_API_URL = "https://script.google.com/macros/s/AKfycbxNu27V2Y2LuKUIQMK8lX1y0joB6YmG6hUwB1fNeVbgzEh22TcDGrOak03Fk3uBHmz-/exec"
+GSM_ARENA_API_URL = os.environ.get("GSM_ARENA_API_URL", "")
 
 
 def get_from_gsm_arena(params: Dict[str, str], search: str = "") -> Dict[str, Any]:
