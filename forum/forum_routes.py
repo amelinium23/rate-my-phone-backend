@@ -54,12 +54,13 @@ def create_new_post() -> Response:
         )
         folder_name = f"{user_uid}/{new_post.id}"
         posts = new_doc.get().to_dict().get("posts", [])
-        file_names = upload_to_images_storage(files, folder_name, client)
-        new_post.images = file_names
+        if files:
+            file_names = upload_to_images_storage(files, folder_name, client)
+            new_post.images = file_names
         posts.append(asdict(new_post))
         db.collection("posts").document(user_uid).set({"posts": posts})
-        logger.info(f"[FORUM]: Created new post with title {data.get('title', '')}!")
-        return Response(f"Created new document id: {new_doc}", status=200)
+        logger.info(f"[FORUM]: Created new post with title {new_post.title}!")
+        return Response(f"Created new document id: {new_post.id}", status=200)
     except Exception as e:
         return Response(str(e), status=500)
 
