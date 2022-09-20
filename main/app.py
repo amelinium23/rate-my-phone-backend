@@ -1,32 +1,10 @@
 from flask import Flask, render_template
-from flask_cors import CORS
+from main.utils.mixins import create_app, register_blueprints
 
-from docs.docs_routes import DOCS
-from allegro.allegro_routes import ALLEGRO
-from brands.brand_routes import BRANDS
-from forum.forum_routes import FORUM
-from device.device_routes import DEVICE
-from user.user_routes import USER
-
-from .config import Config
-
-app: Flask = Flask(__name__, template_folder="templates")
-app.config.from_object(Config())
-CORS(app, resource={r"/*": {"origins": "*"}})
+rate_my_phone_app: Flask = create_app()
+register_blueprints(rate_my_phone_app)
 
 
-def register_blueprints():
-    app.register_blueprint(BRANDS)
-    app.register_blueprint(DEVICE)
-    app.register_blueprint(USER)
-    app.register_blueprint(DOCS)
-    app.register_blueprint(FORUM)
-    app.register_blueprint(ALLEGRO)
-
-
-register_blueprints()
-
-
-@app.route("/")
+@rate_my_phone_app.route("/")
 def hello_page() -> str:
-    return render_template("index.html")
+  return render_template("index.html")

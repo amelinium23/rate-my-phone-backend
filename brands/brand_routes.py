@@ -24,7 +24,7 @@ def get_brand_list() -> Response:
         return Response(str(e), status=500)
 
 
-@BRANDS.route("/", methods=["GET"])
+@BRANDS.route("/k", methods=["GET"])
 def get_brand_key() -> Response:
     try:
         data: Dict[str, Any] = request.args.to_dict()

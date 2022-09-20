@@ -1,4 +1,4 @@
-from main.app import app as my_app
+from main.app import rate_my_phone_app
 
 if __name__ == "__main__":
-    my_app.run()
+    rate_my_phone_app.run()
