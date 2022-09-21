@@ -64,5 +64,5 @@ def get_categories_by_id(access_token: str, category_id: str) -> Dict[str, Any]:
 def _fill_headers_with_token(
     access_token: str, headers: Dict[str, str] = DEFAULT_HEADERS
 ) -> Dict[str, str]:
-    headers["Authorization"] = "Bearer " + access_token
+    headers["Authorization"] = f"Bearer {access_token}"
     return headers
