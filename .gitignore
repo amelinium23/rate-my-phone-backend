@@ -2,5 +2,5 @@ venv/**
 .vscode
 __pycache__
 .env
-**.json
 .mypy_cache
+.vercel
