@@ -5,6 +5,6 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
   - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: ''
+    rev: 'v1.7.0'
     hooks:
       - id: autopep8
