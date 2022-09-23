@@ -22,7 +22,7 @@ def search_listings_in_allegro(device_name: str, access_token: str) -> Dict[str,
             "searchMode": SearchMode.REGULAR.value,
         }
         response = get(
-            URL.rstrip("/") + "/offers/listings", params=params, headers=headers
+            URL.rstrip("/") + "/offers/listing", params=params, headers=headers
         )
         return json.loads(response.text)
     except Exception as e:
