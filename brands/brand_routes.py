@@ -12,6 +12,7 @@ def get_brand_list() -> Response:
         args: Dict[str, str] = request.args.to_dict()
         page_number: int = int(args.get("page_number", 1))
         page_size: int = int(args.get("page_size", 20))
+        sort_mode: str = args.get("sort_mode", "a")
         brands: List[Brand] = _get_brand_list()
         start_index: int = (page_number - 1) * page_size
         end_index: int = start_index + page_size
@@ -51,3 +52,7 @@ def _get_brand_list() -> List["Brand"]:
     data: Dict = get_from_gsm_arena({"route": "brand-list"})
     brands: List["Brand"] = _parse_brands(data)
     return brands
+
+
+def _get_result_brand_list(start_index: int, end_index: int, sort_mode: str, brands: List["Brand"]) -> List["Brand"]:
+    pass
