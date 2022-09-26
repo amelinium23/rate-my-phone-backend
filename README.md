@@ -1,7 +1,5 @@
-<h3 style="text-align: center">Rate my phone - Backend</h3>
-<div style="display: flex; justify-content: center">
-  <img src="https://github.com/amelinium23/rate-my-phone-backend/actions/workflows/main.yml/badge.svg" />
-</div>
+### Rate my phone - backend
+![img](https://github.com/amelinium23/rate-my-phone-backend/actions/workflows/main.yml/badge.svg)
 
 ---
 ### Setup
