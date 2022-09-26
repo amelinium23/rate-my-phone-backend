@@ -1,8 +1,10 @@
+import os
+
 from requests import post, Response
 from typing import Dict
 from flask import current_app
 
-AUTHORIZATION_ALLEGRO_TOKEN_URL = "https://allegro.pl/auth/oauth/token"
+AUTHORIZATION_ALLEGRO_TOKEN_URL = os.environ.get("ALLEGRO_TOKEN_URL", "")
 
 
 def get_access_token() -> Dict[str, str]:

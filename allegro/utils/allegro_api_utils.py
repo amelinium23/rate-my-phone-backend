@@ -1,11 +1,12 @@
 import json
+import os
 
 from requests import get
 from typing import Dict, Any
 from allegro.model.sort_mode import SortMode
 from allegro.model.search_mode import SearchMode
 
-URL = "https://api.allegro.pl/"
+URL = os.environ.get("ALLEGRO_API_URL", "")
 
 DEFAULT_HEADERS = {
     "Accept": "application/vnd.allegro.public.v1+json",
