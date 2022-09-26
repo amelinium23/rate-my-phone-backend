@@ -12,12 +12,14 @@ def get_brand_list() -> Response:
         args: Dict[str, str] = request.args.to_dict()
         page_number: int = int(args.get("page_number", 1))
         page_size: int = int(args.get("page_size", 20))
-        sort_mode: str = args.get("sort_mode", "a")
         brands: List[Brand] = _get_brand_list()
+        sort_mode: str = args.get("sort_mode", "ascending")
         start_index: int = (page_number - 1) * page_size
         end_index: int = start_index + page_size
+        sorted_brands: List[Brand] = _get_result_brand_list(
+            start_index, end_index, sort_mode, brands)
         result: Dict[str, Any] = {
-            "brands": brands[start_index:end_index],
+            "brands": sorted_brands,
             "total_pages": len(brands),
         }
         return jsonify(result)
@@ -55,4 +57,4 @@ def _get_brand_list() -> List["Brand"]:
 
 
 def _get_result_brand_list(start_index: int, end_index: int, sort_mode: str, brands: List["Brand"]) -> List["Brand"]:
-    pass
+    return sorted(brands, key=lambda brand: brand.brand_name, reverse=sort_mode == "descending")[start_index:end_index]
