@@ -12,16 +12,22 @@ from utils.gsm_arena_utils import get_from_gsm_arena, post_to_gsm_arena
 def get_all_devices_by_brand() -> Response:
     try:
         args: Dict[str, str] = request.args.to_dict()
-        page_number: int = int(args.get("page_number", 1))
-        page_size: int = int(args.get("page_size", 10))
-        start_index: int = (page_number - 1) * page_size
-        end_index: int = start_index + page_size
+        page_number = args.get("page_number")
+        page_size = args.get("page_size")
         devices = get_device_list_by_brands()
         result = {
-            "data": devices[start_index:end_index],
+            "data": devices,
             "total": len(devices),
-            "totalPhones": _count_phones(devices),
+            "totalPhones": _count_phones(devices)
         }
+        if page_size and page_number:
+            start_index: int = (int(page_number) - 1) * int(page_size)
+            end_index: int = start_index + int(page_size)
+            result = {
+                "data": devices[start_index:end_index],
+                "total": len(devices),
+                "totalPhones": _count_phones(devices),
+            }
         return jsonify(result)
     except Exception as e:
         return Response(str(e), status=500)
@@ -93,13 +99,15 @@ def get_device_list_by_brands() -> List[DeviceResponse]:
 
 
 def get_device_detail_from_api(device_key: str) -> Dict[str, Any]:
-    data: Dict = post_to_gsm_arena({"route": "device-detail", "key": device_key})
+    data: Dict = post_to_gsm_arena(
+        {"route": "device-detail", "key": device_key})
     return data.get("data", {})
 
 
 @cached(cache=TTLCache(maxsize=1000, ttl=14400))
 def _get_search_result(query: str) -> Dict[str, Any]:
-    data: Dict[str, Any] = post_to_gsm_arena({"route": "search", "query": query})
+    data: Dict[str, Any] = post_to_gsm_arena(
+        {"route": "search", "query": query})
     return data.get("data", {})
 
 
@@ -111,7 +119,8 @@ def _get_recommended_devices() -> List[Dict[str, Any]]:
 
 def _get_comparison_of_devices(device_ids: List[int]) -> Dict[str, Any]:
     data: Dict[str, Any] = post_to_gsm_arena(
-        {"route": "compare", "device_ids": ",".join(str(x) for x in device_ids)}
+        {"route": "compare", "device_ids": ",".join(
+            str(x) for x in device_ids)}
     )
     return data.get("data", {})
 
