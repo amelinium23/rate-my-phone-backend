@@ -17,6 +17,10 @@ def get_user_mapping(user: UserRecord) -> Dict[str, str]:
 
 def update_device_of_user(uid: str, device: Device) -> None:
     db = current_app.config.get("FIRESTORE", None)
+    db.collection("device").document(uid).set({"device": asdict(device)})
+
+
+def get_user_device(uid: str) -> Device:
+    db = current_app.config.get("FIRESTORE", None)
     doc = db.collection("device").document(uid).get().to_dict()
-    doc["device"] = asdict(device)
-    db.collection("device").document(uid).set(doc)
+    return Device(**doc.get("device", {}))

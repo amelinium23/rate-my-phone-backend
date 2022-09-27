@@ -19,17 +19,18 @@ def register_blueprints(app: Flask):
 
 
 def not_found(e):
-  return render_template("404.html"), 404
+    return render_template("404.html"), 404
 
 
 def internal_error(e):
-  return jsonify({"error": str(e)}), 500
+    return jsonify({"error": str(e)}), 500
 
 
 def create_app() -> Flask:
-    app: Flask = Flask(__name__, template_folder="../templates", static_folder="../static")
+    app: Flask = Flask(__name__, template_folder="../templates",
+                       static_folder="../static")
     app.config.from_object(Config())
     app.register_error_handler(404, not_found)
     app.register_error_handler(500, internal_error)
-    CORS(app, resource={r"/*": {"origins": "*"}})
+    CORS(app, resource={r"/*/*": {"origins": "*"}, r"/*": {"origins": "*"}})
     return app

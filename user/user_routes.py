@@ -5,7 +5,7 @@ from logging import getLogger
 from . import USER
 from typing import Any, Dict
 from flask import Response, jsonify, request
-from user.utils.firebase_util import get_user_mapping, update_device_of_user
+from user.utils.firebase_util import get_user_device, get_user_mapping, update_device_of_user
 from firebase_admin.auth import get_user, create_user, update_user, delete_user
 from user.model.user import User
 
@@ -19,7 +19,9 @@ def get_user_by_id() -> Response:
         uid = data.get("uid")
         assert uid is not None, "uid param is required"
         user = get_user(uid)
-        user_instance = User(**get_user_mapping(user))  # type: ignore
+        user_device = get_user_device(uid)
+        user_mapping = get_user_mapping(user)
+        user_instance = User(**user_mapping, device=user_device)
         logger.info(f"[USER]: Get user with uid {user.uid}")
         return jsonify(user_instance)
     except Exception as e:
@@ -70,8 +72,7 @@ def delete_firebase_user() -> Response:
 def edit_user_device() -> Response:
     try:
         data: Dict[str, Any] = json.loads(request.data)
-        uid = data.get("uid")
-        assert uid is not None, "uid param is required"
+        uid = data.get("uid", "")
         new_device = Device(**data.get("device", {}))
         update_device_of_user(uid, new_device)
         logger.info(f"[USER]: Edited user device with uid {uid}")
