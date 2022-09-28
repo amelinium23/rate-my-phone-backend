@@ -24,3 +24,8 @@ def get_user_device(uid: str) -> Device:
     db = current_app.config.get("FIRESTORE", None)
     doc = db.collection("device").document(uid).get().to_dict()
     return Device(**doc.get("device", {}))
+
+
+def delete_user_device(uid: str) -> None:
+    db = current_app.config.get("FIRESTORE", None)
+    db.collection("device").document(uid).delete()
