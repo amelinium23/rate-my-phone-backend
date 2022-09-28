@@ -13,11 +13,15 @@ def get_brand_list() -> Response:
         page_number: int = int(args.get("page_number", 1))
         page_size: int = int(args.get("page_size", 20))
         brands: List[Brand] = _get_brand_list()
+        filtered_brands: List[Brand] = list(
+            filter(lambda brand: brand.brand_name != "", brands)
+        )
         sort_mode: str = args.get("sort_mode", "ascending")
         start_index: int = (page_number - 1) * page_size
         end_index: int = start_index + page_size
         sorted_brands: List[Brand] = _get_result_brand_list(
-            start_index, end_index, sort_mode, brands)
+            start_index, end_index, sort_mode, filtered_brands
+        )
         result: Dict[str, Any] = {
             "brands": sorted_brands,
             "total_pages": len(brands),
@@ -56,5 +60,9 @@ def _get_brand_list() -> List["Brand"]:
     return brands
 
 
-def _get_result_brand_list(start_index: int, end_index: int, sort_mode: str, brands: List["Brand"]) -> List["Brand"]:
-    return sorted(brands, key=lambda brand: brand.brand_name, reverse=sort_mode == "descending")[start_index:end_index]
+def _get_result_brand_list(
+    start_index: int, end_index: int, sort_mode: str, brands: List["Brand"]
+) -> List["Brand"]:
+    return sorted(
+        brands, key=lambda brand: brand.brand_name, reverse=sort_mode == "descending"
+    )[start_index:end_index]
