@@ -27,10 +27,8 @@ def get_post_by_id() -> Response:
     try:
         db = current_app.config.get("FIRESTORE", None)
         post_id: int = int(request.args.get("id", 0))
-        print(post_id)
         doc = db.collection("posts").get()
         posts = _parse_documents_to_list(doc)
-        print(posts)
         post = _find_post_by_id(post_id, posts)
         return jsonify(post)
     except Exception as e:
