@@ -22,6 +22,21 @@ def get_all_posts() -> Response:
         return Response(str(e), status=500)
 
 
+@FORUM.route("/find", methods=["GET"])
+def get_post_by_id() -> Response:
+    try:
+        db = current_app.config.get("FIRESTORE", None)
+        post_id: int = int(request.args.get("id", 0))
+        print(post_id)
+        doc = db.collection("posts").get()
+        posts = _parse_documents_to_list(doc)
+        print(posts)
+        post = _find_post_by_id(post_id, posts)
+        return jsonify(post)
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
 @FORUM.route("/post", methods=["GET"])
 def get_all_post_by_user() -> Response:
     try:
@@ -41,7 +56,7 @@ def get_all_post_by_user() -> Response:
 def create_new_post() -> Response:
     try:
         data: Dict[str, Any] = request.form
-        client = current_app.config.get('GOOGLE_CLOUD_CLIENT', None)
+        client = current_app.config.get("GOOGLE_CLOUD_CLIENT", None)
         files = request.files
         user_uid: str = data.get("uid", "")
         assert user_uid is not None, "uid param is required"
@@ -103,9 +118,7 @@ def edit_post() -> Response:
         return Response(str(e), status=500)
 
 
-def _find_post_by_id(
-    post_id: int, posts: List[Dict[str, Any]]
-) -> Optional[Dict[str, Any]]:
+def _find_post_by_id(post_id: int, posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     for post in posts:
         if post_id == post.get("id", 0):
             return post
@@ -121,7 +134,7 @@ def _edit_post(
     return posts
 
 
-def _parse_documents_to_list(collection) -> List["Post"]:
+def _parse_documents_to_list(collection) -> List[Dict[str, Any]]:
     posts = []
     for doc in collection:
         doc_posts = doc.get("posts") if doc.get("posts") is not None else []
