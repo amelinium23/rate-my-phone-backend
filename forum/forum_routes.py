@@ -64,6 +64,7 @@ def create_new_post() -> Response:
             uid=user_uid,
             title=data.get("title", ""),
             description=data.get("description", ""),
+            type=data.get("type", ""),
         )
         folder_name = f"{user_uid}/{new_post.id}"
         posts = new_doc.get().to_dict().get("posts", [])
