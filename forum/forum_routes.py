@@ -28,7 +28,7 @@ def get_all_posts() -> Response:
 def get_post_by_id() -> Response:
     try:
         db = current_app.config.get("FIRESTORE", None)
-        post_id: int = int(request.args.get("id", 0))
+        post_id: str = request.args.get("id", "")
         doc = db.collection("posts").get()
         posts = _parse_documents_to_list(doc)
         post = _find_post_by_id(post_id, posts)
@@ -127,7 +127,7 @@ def edit_post() -> Response:
 
 
 def _find_post_by_id(
-    post_id: int, posts: List[Dict[str, Any]]
+    post_id: str, posts: List[Dict[str, Any]]
 ) -> Optional[Dict[str, Any]]:
     for post in posts:
         if post_id == post.get("id", 0):
@@ -136,7 +136,7 @@ def _find_post_by_id(
 
 
 def _edit_post(
-    posts: List[Dict[str, Any]], post_id: int, edited_post: Dict[str, Any]
+    posts: List[Dict[str, Any]], post_id: str, edited_post: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
     for index, post in enumerate(posts):
         if post_id == post.get("id", 0):
