@@ -7,7 +7,6 @@ repos:
     rev: '22.8.0'
     hooks:
       - id: black
-        args: ["--line-length", "100"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:

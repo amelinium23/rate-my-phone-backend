@@ -6,6 +6,8 @@ from dataclasses import asdict
 from forum.model.post import Post
 from logging import getLogger
 from forum.utils.image_uploader import upload_to_images_storage
+from main.firebase.firebase_app import verify_token
+from werkzeug.datastructures import FileStorage
 
 
 logger = getLogger(__name__)
@@ -38,9 +40,10 @@ def get_post_by_id() -> Response:
 @FORUM.route("/post", methods=["GET"])
 def get_all_post_by_user() -> Response:
     try:
-        data: Dict[str, Any] = request.args.to_dict()
-        user_uid: str = data.get("uid", "")
-        assert user_uid is not None, "uid param is required"
+        headers: Dict[str, Any] = request.headers
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is not None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
         db = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").document(user_uid).get().to_dict()
         posts = doc.get("posts", [])
@@ -54,10 +57,12 @@ def get_all_post_by_user() -> Response:
 def create_new_post() -> Response:
     try:
         data: Dict[str, Any] = request.form
+        headers: Dict[str, Any] = request.headers
+        files: Dict[str, FileStorage] = request.files
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
         client = current_app.config.get("GOOGLE_CLOUD_CLIENT", None)
-        files = request.files
-        user_uid: str = data.get("uid", "")
-        assert user_uid is not None, "uid param is required"
         db = current_app.config.get("FIRESTORE", None)
         new_doc = db.collection("posts").document(user_uid)
         new_post = Post(
@@ -83,8 +88,10 @@ def create_new_post() -> Response:
 def delete_post() -> Response:
     try:
         data: Dict[str, Any] = json.loads(request.data)
-        user_uid: str = data.get("uid", "")
-        assert user_uid is not None, "uid param is required"
+        headers: Dict[str, Any] = request.headers
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
         post_id: int = data.get("post_id", 0)
         db = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").document(user_uid).get().to_dict()
@@ -103,8 +110,10 @@ def delete_post() -> Response:
 def edit_post() -> Response:
     try:
         data: Dict[str, Any] = json.loads(request.data)
-        user_uid: str = data.get("uid", "")
-        assert user_uid is not None, "uid param is required"
+        headers: Dict[str, Any] = request.headers
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
         post_id: int = data.get("post_id", 0)
         db = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").document(user_uid).get().to_dict()
@@ -117,7 +126,9 @@ def edit_post() -> Response:
         return Response(str(e), status=500)
 
 
-def _find_post_by_id(post_id: int, posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+def _find_post_by_id(
+    post_id: int, posts: List[Dict[str, Any]]
+) -> Optional[Dict[str, Any]]:
     for post in posts:
         if post_id == post.get("id", 0):
             return post
