@@ -60,7 +60,7 @@ def create_new_post() -> Response:
         headers: Dict[str, Any] = request.headers
         files: Dict[str, FileStorage] = request.files
         token: str = str(headers["Authorization"]).split(" ")[1]
-        assert token is None, "Authorization header is required"
+        assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
         client = current_app.config.get("GOOGLE_CLOUD_CLIENT", None)
         db = current_app.config.get("FIRESTORE", None)
@@ -90,9 +90,9 @@ def delete_post() -> Response:
         data: Dict[str, Any] = json.loads(request.data)
         headers: Dict[str, Any] = request.headers
         token: str = str(headers["Authorization"]).split(" ")[1]
-        assert token is None, "Authorization header is required"
+        assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
-        post_id: int = data.get("post_id", 0)
+        post_id: str = data.get("post_id", 0)
         db = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").document(user_uid).get().to_dict()
         posts: List[Dict[str, Any]] = doc.get("posts", [])
@@ -112,9 +112,9 @@ def edit_post() -> Response:
         data: Dict[str, Any] = json.loads(request.data)
         headers: Dict[str, Any] = request.headers
         token: str = str(headers["Authorization"]).split(" ")[1]
-        assert token is None, "Authorization header is required"
+        assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
-        post_id: int = data.get("post_id", 0)
+        post_id: str = data.get("post_id", "")
         db = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").document(user_uid).get().to_dict()
         posts: List[Dict[str, Any]] = doc.get("posts", [])
@@ -139,7 +139,7 @@ def _edit_post(
     posts: List[Dict[str, Any]], post_id: str, edited_post: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
     for index, post in enumerate(posts):
-        if post_id == post.get("id", 0):
+        if post_id == post.get("id", ""):
             posts[index] = edited_post
     return posts
 
