@@ -56,30 +56,23 @@ def get_all_post_by_user() -> Response:
 @FORUM.route("/post", methods=["POST"])
 def create_new_post() -> Response:
     try:
-        data: Dict[str, Any] = request.form
+        data: Dict[str, Any] = json.loads(request.data)
         headers: Dict[str, Any] = request.headers
-        files: Dict[str, FileStorage] = request.files
         token: str = str(headers["Authorization"]).split(" ")[1]
         assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
-        client = current_app.config.get("GOOGLE_CLOUD_CLIENT", None)
         db = current_app.config.get("FIRESTORE", None)
-        new_doc = db.collection("posts").document(user_uid)
         new_post = Post(
             uid=user_uid,
             title=data.get("title", ""),
             description=data.get("description", ""),
             type=data.get("type", ""),
         )
-        folder_name = f"{user_uid}/{new_post.id}"
-        posts = new_doc.get().to_dict().get("posts", [])
-        if files:
-            file_names = upload_to_images_storage(files, folder_name, client)
-            new_post.images = file_names
+        posts: List[Dict[str, Any]] = _get_docs_of_user(db, user_uid)
         posts.append(asdict(new_post))
         db.collection("posts").document(user_uid).set({"posts": posts})
         logger.info(f"[FORUM]: Created new post with title {new_post.title}!")
-        return Response(f"Created new document id: {new_post.id}", status=200)
+        return jsonify({"post": asdict(new_post)})
     except Exception as e:
         return Response(str(e), status=500)
 
@@ -94,8 +87,7 @@ def delete_post() -> Response:
         user_uid: str = verify_token(token)["uid"]
         post_id: str = data.get("post_id", 0)
         db = current_app.config.get("FIRESTORE", None)
-        doc = db.collection("posts").document(user_uid).get().to_dict()
-        posts: List[Dict[str, Any]] = doc.get("posts", [])
+        posts: List[Dict[str, Any]] = _get_docs_of_user(db, user_uid)
         post: Optional[Dict[str, Any]] = _find_post_by_id(post_id, posts)
         assert post is not None, f"Post with id: {post_id} not found!"
         posts.remove(post)
@@ -109,19 +101,42 @@ def delete_post() -> Response:
 @FORUM.route("/post", methods=["PUT"])
 def edit_post() -> Response:
     try:
-        data: Dict[str, Any] = json.loads(request.data)
+        json_data: Dict[str, Any] = json.loads(request.data)
         headers: Dict[str, Any] = request.headers
         token: str = str(headers["Authorization"]).split(" ")[1]
         assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
-        post_id: str = data.get("post_id", "")
+        post_id: str = json_data.get("id", "")
         db = current_app.config.get("FIRESTORE", None)
-        doc = db.collection("posts").document(user_uid).get().to_dict()
-        posts: List[Dict[str, Any]] = doc.get("posts", [])
-        edited_posts: List[Dict[str, Any]] = _edit_post(posts, post_id, data)
+        posts: List[Dict[str, Any]] = _get_docs_of_user(db, user_uid)
+        edited_posts: List[Dict[str, Any]] = _edit_post(posts, post_id, json_data)
         logger.info(f"[FORUM]: Edited post with id: {post_id}!")
         db.collection("posts").document(user_uid).set({"posts": edited_posts})
         return Response(f"Edited post with id: {post_id}.", status=200)
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
+@FORUM.route("/post/upload", methods=["POST"])
+def upload_image() -> Response:
+    try:
+        data: Dict[str, Any] = request.form
+        headers: Dict[str, Any] = request.headers
+        files: Dict[str, FileStorage] = request.files
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is not None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
+        post_id: str = data.get("id", "")
+        db = current_app.config.get("FIRESTORE", None)
+        client = current_app.config.get("GOOGLE_CLOUD_CLIENT", None)
+        folder_name = f"{user_uid}/{post_id}"
+        file_names = upload_to_images_storage(files, folder_name, client)
+        posts: List[Dict[str, Any]] = _get_docs_of_user(db, user_uid)
+        post = _find_post_by_id(post_id, posts) or {}
+        post["images"] = file_names
+        db.collection("posts").document(user_uid).set({"posts": posts})
+        logger.info(f"[FORUM]: Uploaded images for user {user_uid}!")
+        return jsonify(file_names)
     except Exception as e:
         return Response(str(e), status=500)
 
@@ -130,7 +145,7 @@ def _find_post_by_id(
     post_id: str, posts: List[Dict[str, Any]]
 ) -> Optional[Dict[str, Any]]:
     for post in posts:
-        if post_id == post.get("id", 0):
+        if post_id == post.get("id", ""):
             return post
     return None
 
@@ -151,3 +166,8 @@ def _parse_documents_to_list(collection) -> List[Dict[str, Any]]:
         for post in doc_posts:
             posts.append(post)
     return posts
+
+
+def _get_docs_of_user(db, user_uid: str) -> List[Dict[str, Any]]:
+    doc = db.collection("posts").document(user_uid).get().to_dict()
+    return doc.get("posts", [])
