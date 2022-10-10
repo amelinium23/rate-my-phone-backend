@@ -1,14 +1,15 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List
 from forum.model.post_type import PostType
 from uuid import uuid1
 
 
 @dataclass
 class Comment:
+    uid: str
     id: str = str(uuid1())
-    comment: Optional[str] = None
     votes: int = 0
+    comment: str = ""
 
 
 @dataclass

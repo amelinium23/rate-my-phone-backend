@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 from flask import Response, request, current_app, jsonify
 from forum import FORUM
 from dataclasses import asdict
-from forum.model.post import Post
+from forum.model.post import Post, Comment
 from logging import getLogger
 from forum.utils.image_uploader import upload_to_images_storage
 from main.firebase.firebase_app import verify_token
@@ -137,6 +137,31 @@ def upload_image() -> Response:
         db.collection("posts").document(user_uid).set({"posts": posts})
         logger.info(f"[FORUM]: Uploaded images for user {user_uid}!")
         return jsonify(file_names)
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
+@FORUM.route("/comment/add", methods=["POST"])
+def add_comment() -> Response:
+    try:
+        data: Dict[str, Any] = json.loads(request.data)
+        headers: Dict[str, Any] = request.headers
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        user_uid: str = verify_token(token)["uid"]
+        assert token is not None, "Authorization header is required"
+        db = current_app.config.get("FIRESTORE", None)
+        post_id: str = data.get("id", "")
+        author_uid: str = data.get("authorId", "")
+        posts: List[Dict[str, Any]] = _get_docs_of_user(db, author_uid)
+        comment_body: str = data.get("comment", "")
+        post = _find_post_by_id(post_id, posts) or {}
+        comments = post.get("comments", []) or []
+        new_comment = asdict(Comment(uid=user_uid, comment=comment_body))
+        comments.append(new_comment)
+        post["comments"] = comments
+        edited_posts: List[Dict[str, Any]] = _edit_post(posts, post_id, post)
+        db.collection("posts").document(user_uid).set({"posts": edited_posts})
+        return jsonify(asdict(new_comment))
     except Exception as e:
         return Response(str(e), status=500)
 
