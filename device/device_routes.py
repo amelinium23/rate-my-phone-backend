@@ -1,5 +1,11 @@
 import json
-from device.utils.device_helper import count_phones, get_comparison_of_devices, get_recommended_devices_from_api, get_device_detail_from_api, get_device_list_by_brands
+from device.utils.device_helper import (
+    count_phones,
+    get_comparison_of_devices,
+    get_recommended_devices_from_api,
+    get_device_detail_from_api,
+    get_device_list_by_brands,
+)
 from device.utils.response_parser import get_devices_by_key
 from . import DEVICE
 from typing import Dict, List, Any
@@ -16,7 +22,7 @@ def get_all_devices_by_brand() -> Response:
         result = {
             "data": devices,
             "total": len(devices),
-            "totalPhones": count_phones(devices)
+            "totalPhones": count_phones(devices),
         }
         if page_size and page_number:
             start_index: int = (int(page_number) - 1) * int(page_size)
@@ -41,7 +47,7 @@ def get_device_by_brand() -> Response:
         result = {
             "data": devices_from_brand,
             "totalPhones": count_phones(devices),
-            "total": len(devices_from_brand) if devices_from_brand else 1
+            "total": len(devices_from_brand) if devices_from_brand else 1,
         }
         return jsonify(result)
     except Exception as e:

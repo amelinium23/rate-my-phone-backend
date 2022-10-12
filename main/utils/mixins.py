@@ -27,8 +27,9 @@ def internal_error(e):
 
 
 def create_app() -> Flask:
-    app: Flask = Flask(__name__, template_folder="../templates",
-                       static_folder="../static")
+    app: Flask = Flask(
+        __name__, template_folder="../templates", static_folder="../static"
+    )
     app.config.from_object(Config())
     app.register_error_handler(404, not_found)
     app.register_error_handler(500, internal_error)

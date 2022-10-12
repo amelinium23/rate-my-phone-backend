@@ -6,7 +6,14 @@ from google.cloud.firestore_v1.types.document import Document
 from forum import FORUM
 from dataclasses import asdict
 from forum.model.post import Post, Comment
-from forum.utils.helper_function import edit_comments, find_comment_by_id, find_post_by_id, get_docs_of_user, parse_documents_to_list, edit_post as h_edit_post
+from forum.utils.helper_function import (
+    edit_comments,
+    find_comment_by_id,
+    find_post_by_id,
+    get_docs_of_user,
+    parse_documents_to_list,
+    edit_post as h_edit_post,
+)
 from forum.utils.image_uploader import upload_to_images_storage
 from main.firebase.firebase_app import verify_token
 from werkzeug.datastructures import FileStorage
@@ -152,7 +159,9 @@ def add_comment() -> Response:
         comment_body: str = data.get("comment", "")
         post = find_post_by_id(post_id, posts) or {}
         comments = post.get("comments", []) or []
-        new_comment = asdict(Comment(id=str(uuid1()), uid=user_uid, comment=comment_body))
+        new_comment = asdict(
+            Comment(id=str(uuid1()), uid=user_uid, comment=comment_body)
+        )
         comments.append(new_comment)
         post["comments"] = comments
         edited_posts: List[Dict[str, Any]] = h_edit_post(posts, post_id, post)
@@ -186,6 +195,7 @@ def delete_comment() -> Response:
     except Exception as e:
         return Response(str(e), status=500)
 
+
 @FORUM.route("/comment/edit", methods=["PUT"])
 def edit_comment() -> Response:
     try:
@@ -200,7 +210,9 @@ def edit_comment() -> Response:
         author_uid: str = data.get("authorId", "")
         comment_body: str = data.get("comment", "")
         votes: int = data.get("votes", 0)
-        edited_comment: Dict[str, Any] = asdict(Comment(id=comment_id, uid=user_uid, comment=comment_body, votes=votes))
+        edited_comment: Dict[str, Any] = asdict(
+            Comment(id=comment_id, uid=user_uid, comment=comment_body, votes=votes)
+        )
         posts: List[Dict[str, Any]] = get_docs_of_user(db, author_uid)
         post = find_post_by_id(post_id, posts) or {}
         comments = post.get("comments", []) or []

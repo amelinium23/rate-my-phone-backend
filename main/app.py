@@ -7,4 +7,4 @@ register_blueprints(rate_my_phone_app)
 
 @rate_my_phone_app.route("/")
 def hello_page() -> str:
-  return render_template("index.html")
+    return render_template("index.html")

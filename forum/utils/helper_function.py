@@ -34,14 +34,18 @@ def get_docs_of_user(db: FirestoreClient, user_uid: str) -> List[Dict[str, Any]]
     return doc.get("posts", [])
 
 
-def find_comment_by_id(comment_id: str, comments: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+def find_comment_by_id(
+    comment_id: str, comments: List[Dict[str, Any]]
+) -> Optional[Dict[str, Any]]:
     for comment in comments:
         if comment_id == comment.get("id", ""):
             return comment
     return None
 
 
-def edit_comments(comments: List[Dict[str, Any]], comment_id: str, edited_comment: Dict[str, Any]) -> List[Dict[str, Any]]:
+def edit_comments(
+    comments: List[Dict[str, Any]], comment_id: str, edited_comment: Dict[str, Any]
+) -> List[Dict[str, Any]]:
     for index, comment in enumerate(comments):
         if comment_id == comment.get("id", ""):
             comments[index] = edited_comment

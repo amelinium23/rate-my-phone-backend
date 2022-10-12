@@ -14,15 +14,13 @@ def get_device_list_by_brands() -> List[DeviceResponse]:
 
 
 def get_device_detail_from_api(device_key: str) -> Dict[str, Any]:
-    data: Dict = post_to_gsm_arena(
-        {"route": "device-detail", "key": device_key})
+    data: Dict = post_to_gsm_arena({"route": "device-detail", "key": device_key})
     return data.get("data", {})
 
 
 @cached(cache=TTLCache(maxsize=1000, ttl=14400))
 def get_search_result_from_api(query: str) -> Dict[str, Any]:
-    data: Dict[str, Any] = post_to_gsm_arena(
-        {"route": "search", "query": query})
+    data: Dict[str, Any] = post_to_gsm_arena({"route": "search", "query": query})
     return data.get("data", {})
 
 
@@ -34,8 +32,7 @@ def get_recommended_devices_from_api() -> List[Dict[str, Any]]:
 
 def get_comparison_of_devices(device_ids: List[int]) -> Dict[str, Any]:
     data: Dict[str, Any] = post_to_gsm_arena(
-        {"route": "compare", "device_ids": ",".join(
-            str(x) for x in device_ids)}
+        {"route": "compare", "device_ids": ",".join(str(x) for x in device_ids)}
     )
     return data.get("data", {})
 

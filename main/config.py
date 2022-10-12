@@ -1,5 +1,9 @@
 import os
-from main.firebase.firebase_app import get_firebase_app, get_firestore_db, get_google_cloud_client
+from main.firebase.firebase_app import (
+    get_firebase_app,
+    get_firestore_db,
+    get_google_cloud_client,
+)
 from google.cloud.firestore import Client as FirestoreClient
 from google.cloud.storage import Client as CloudClient
 

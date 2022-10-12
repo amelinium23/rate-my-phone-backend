@@ -5,7 +5,12 @@ from logging import getLogger
 from . import USER
 from typing import Any, Dict
 from flask import Response, jsonify, request
-from user.utils.firebase_util import delete_user_device, get_user_device, get_user_mapping, update_device_of_user
+from user.utils.firebase_util import (
+    delete_user_device,
+    get_user_device,
+    get_user_mapping,
+    update_device_of_user,
+)
 from firebase_admin.auth import get_user, create_user, update_user, delete_user
 from user.model.user import User
 
