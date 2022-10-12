@@ -9,16 +9,18 @@ from device.utils.device_helper import (
 from device.utils.response_parser import get_devices_by_key
 from . import DEVICE
 from typing import Dict, List, Any
-from flask import Response, jsonify, request
+from flask import Response, jsonify, request, current_app
+from google.cloud.firestore import Client as FirestoreClient
 
 
 @DEVICE.route("/")
 def get_all_devices_by_brand() -> Response:
     try:
         args: Dict[str, str] = request.args.to_dict()
+        db: FirestoreClient = current_app.config.get("FIRESTORE")
         page_number = args.get("page_number")
         page_size = args.get("page_size")
-        devices = get_device_list_by_brands()
+        devices = get_device_list_by_brands(db)
         result = {
             "data": devices,
             "total": len(devices),
@@ -40,9 +42,10 @@ def get_all_devices_by_brand() -> Response:
 @DEVICE.route("/brand", methods=["GET"])
 def get_device_by_brand() -> Response:
     try:
+        db: FirestoreClient = current_app.config.get("FIRESTORE")
         params: Dict[str, str] = request.args.to_dict()
         brand_key: str = params.get("brand_key", "")
-        devices = get_device_list_by_brands()
+        devices = get_device_list_by_brands(db)
         devices_from_brand = get_devices_by_key(brand_key, devices)
         result = {
             "data": devices_from_brand,

@@ -4,13 +4,13 @@ from utils.gsm_arena_utils import post_to_gsm_arena
 from cachetools import TTLCache, cached
 from device.model.device import DeviceResponse
 from utils.gsm_arena_utils import get_from_gsm_arena, post_to_gsm_arena
+from google.cloud.firestore import Client as FirestoreClient
 
 
-@cached(cache=TTLCache(maxsize=1000, ttl=14400))
-def get_device_list_by_brands() -> List[DeviceResponse]:
-    data: Dict = get_from_gsm_arena({"route": "device-list"})
-    json_data = data.get("data", {})
-    return parse_response(json_data)
+def get_device_list_by_brands(db: FirestoreClient) -> List[DeviceResponse]:
+    devices = db.collection("devices").document("devices").get().to_dict()
+    real_devices = devices.get("devices", [])
+    return [DeviceResponse(**device) for device in real_devices]
 
 
 def get_device_detail_from_api(device_key: str) -> Dict[str, Any]:

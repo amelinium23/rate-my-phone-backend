@@ -67,7 +67,7 @@ def create_new_post() -> Response:
         token: str = str(headers["Authorization"]).split(" ")[1]
         assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
-        db = current_app.config.get("FIRESTORE", None)
+        db: FirestoreClient = current_app.config.get("FIRESTORE", None)
         new_post = Post(
             id=str(uuid1()),
             uid=user_uid,

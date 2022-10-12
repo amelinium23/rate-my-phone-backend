@@ -10,6 +10,7 @@ from google.cloud.storage import Client as CloudClient
 
 class Config:
     DEBUG = True
+    SCHEDULER_API_ENABLED = True
     DEVELOPMENT = True
     FIREBASE_APP = get_firebase_app()
     FIRESTORE: FirestoreClient = get_firestore_db()
