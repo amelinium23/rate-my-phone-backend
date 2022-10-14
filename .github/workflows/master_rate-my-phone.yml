@@ -62,6 +62,7 @@ jobs:
           echo ${{ secrets.GOOGLE_CREDENTIALS }} >> ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Configure deployment and runtime settings on the webapp
+        depends: Create firebase json
         run: |
           az configure --defaults ${{ env.RESOURCE_GROUP }}
           az webapp config appsettings --name ${{ env.WEBAPP_NAME }} --settings \
