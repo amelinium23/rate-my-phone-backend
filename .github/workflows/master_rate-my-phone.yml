@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Create firebase json
+        run: |
+          touch ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          echo ${{ secrets.GOOGLE_CREDENTIALS }} >> ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
         with:
@@ -56,13 +61,7 @@ jobs:
           name: python-app
           path: .
 
-      - name: Create firebase json
-        run: |
-          touch ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          echo ${{ secrets.GOOGLE_CREDENTIALS }} >> ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
       - name: Configure deployment and runtime settings on the webapp
-        depends: Create firebase json
         run: |
           az configure --defaults ${{ env.RESOURCE_GROUP }}
           az webapp config appsettings --name ${{ env.WEBAPP_NAME }} --settings \
