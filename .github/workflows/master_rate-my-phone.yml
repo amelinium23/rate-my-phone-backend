@@ -58,7 +58,8 @@ jobs:
 
       - name: Create firebase json
         run: |
-          echo ${{ env.GOOGLE_CREDENTIALS }} >> ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          touch ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          echo ${{ secrets.GOOGLE_CREDENTIALS }} >> ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Configure deployment and runtime settings on the webapp
         run: |
