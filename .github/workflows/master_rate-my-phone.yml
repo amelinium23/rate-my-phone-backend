@@ -61,6 +61,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL }}
 
+      - name: Create firebase json
+        run: |
+          echo ${{ env.GOOGLE_CREDENTIALS }} >> ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+
       - name: Configure deployment and runtime settings on the webapp
         run: |
           az configure --defaults ${{ env.RESOURCE_GROUP }}
