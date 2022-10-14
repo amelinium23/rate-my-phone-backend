@@ -9,7 +9,7 @@ from brands.brand_routes import BRANDS
 from forum.forum_routes import FORUM
 from device.device_routes import DEVICE
 from main.tasks.brand_task import brand_task
-from main.tasks.devices_taks import device_task
+from main.tasks.devices_task import device_task
 from user.user_routes import USER
 
 
