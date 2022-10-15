@@ -38,7 +38,6 @@ jobs:
         run: |
           touch ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           echo ${{ secrets.GOOGLE_CREDENTIALS }} >> ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          cat ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
