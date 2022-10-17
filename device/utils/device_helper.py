@@ -32,7 +32,7 @@ def get_recommended_devices_from_api() -> List[Dict[str, Any]]:
 
 def get_comparison_of_devices(device_ids: List[int]) -> Dict[str, Any]:
     data: Dict[str, Any] = post_to_gsm_arena(
-        {"route": "compare", "device_ids": ",".join(str(x) for x in device_ids)}
+        {"route": "compare", "device_id": ",".join(str(x) for x in device_ids)}
     )
     return data.get("data", {})
 
