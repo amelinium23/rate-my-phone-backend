@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Any, Dict, List
+from typing import Dict, List
 from google.cloud.firestore import Client as FirestoreClient
 from flask import Flask
 from device.model.device import DeviceResponse
