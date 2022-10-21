@@ -2,9 +2,11 @@ import json
 from device.utils.device_helper import (
     count_phones,
     get_comparison_of_devices,
+    get_comparison_of_price,
     get_recommended_devices_from_api,
     get_device_detail_from_api,
     get_device_list_by_brands,
+    sort_devices,
 )
 from device.utils.response_parser import get_devices_by_key
 from . import DEVICE
@@ -20,17 +22,19 @@ def get_all_devices_by_brand() -> Response:
         db: FirestoreClient = current_app.config.get("FIRESTORE")
         page_number = args.get("page_number")
         page_size = args.get("page_size")
+        sort_mode = args.get("sort_mode", "ascending")
         devices = get_device_list_by_brands(db)
+        sorted_devices = sort_devices(devices, sort_mode)
         result = {
-            "data": devices,
+            "data": sorted_devices,
             "total": len(devices),
             "totalPhones": count_phones(devices),
         }
-        if page_size and page_number:
+        if page_size and page_number and sort_mode:
             start_index: int = (int(page_number) - 1) * int(page_size)
             end_index: int = start_index + int(page_size)
             result = {
-                "data": devices[start_index:end_index],
+                "data": sorted_devices[start_index:end_index],
                 "total": len(devices),
                 "totalPhones": count_phones(devices),
             }
@@ -94,5 +98,15 @@ def get_comparison_result() -> Response:
         device_ids: List[int] = data.get("device_ids", [])
         comparison = get_comparison_of_devices(device_ids)
         return jsonify(comparison)
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
+@DEVICE.route("/price", methods=["GET"])
+def get_prices_of_phone() -> Response:
+    try:
+        params: Dict[str, str] = request.args.to_dict()
+        device_key: str = params.get("device_key", "")
+        return jsonify(get_comparison_of_price(device_key))
     except Exception as e:
         return Response(str(e), status=500)

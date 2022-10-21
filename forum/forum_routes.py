@@ -2,7 +2,6 @@ import json
 from typing import Any, Dict, List, Optional
 from uuid import uuid1
 from flask import Response, request, current_app, jsonify
-from google.cloud.firestore_v1.types.document import Document
 from forum import FORUM
 from dataclasses import asdict
 from forum.model.post import Post, Comment
@@ -114,7 +113,7 @@ def edit_post() -> Response:
         post_id: str = json_data.get("id", "")
         db = current_app.config.get("FIRESTORE", None)
         posts: List[Dict[str, Any]] = get_docs_of_user(db, user_uid)
-        edited_posts: List[Dict[str, Any]] = edit_post(posts, post_id, json_data)
+        edited_posts: List[Dict[str, Any]] = h_edit_post(posts, post_id, json_data)
         db.collection("posts").document(user_uid).set({"posts": edited_posts})
         return Response(f"Edited post with id: {post_id}.", status=200)
     except Exception as e:
