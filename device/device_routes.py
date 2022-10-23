@@ -7,6 +7,7 @@ from device.utils.device_helper import (
     get_device_detail_from_api,
     get_device_list_by_brands,
     sort_devices,
+    get_search_result_from_api,
 )
 from device.utils.response_parser import get_devices_by_key
 from . import DEVICE
@@ -86,7 +87,7 @@ def get_search_result() -> Response:
     try:
         params: Dict[str, str] = request.args.to_dict()
         query: str = params.get("query", "")
-        return jsonify(get_search_result(query))
+        return jsonify(get_search_result_from_api(query))
     except Exception as e:
         return Response(str(e), status=500)
 

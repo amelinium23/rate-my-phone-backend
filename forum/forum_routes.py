@@ -12,6 +12,7 @@ from forum.utils.helper_function import (
     get_docs_of_user,
     parse_documents_to_list,
     edit_post as h_edit_post,
+    sort_documents,
 )
 from forum.utils.image_uploader import upload_to_images_storage
 from main.firebase.firebase_app import verify_token
@@ -22,10 +23,14 @@ from google.cloud.firestore import Client as FirestoreClient
 @FORUM.route("/", methods=["GET"])
 def get_all_posts() -> Response:
     try:
+        args: Dict[str, Any] = request.args.to_dict()
+        sort_mode: str = args.get("sort_mode", "ascending").lower()
+        sort_by: str = args.get("sort_by", "title").lower()
         db: FirestoreClient = current_app.config.get("FIRESTORE", None)
         doc = db.collection("posts").get()
-        res = parse_documents_to_list(doc)
-        return jsonify(res)
+        docs = parse_documents_to_list(doc)
+        sorted_docs = sort_documents(docs, sort_mode, sort_by)
+        return jsonify(sorted_docs)
     except Exception as e:
         return Response(str(e), status=500)
 
@@ -73,6 +78,7 @@ def create_new_post() -> Response:
             title=data.get("title", ""),
             description=data.get("description", ""),
             type=data.get("type", ""),
+            device_key=data.get("device_key", ""),
         )
         posts: List[Dict[str, Any]] = get_docs_of_user(db, user_uid)
         posts.append(asdict(new_post))

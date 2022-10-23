@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - GSM_ARENA_API_URL=https://script.google.com/macros/s/AKfycbwZVHW_-CozBkuiQwX-YEBA5L6PVhMV3YDu-1KZXHThiqdQxzyRfx89uf1Lm-8dDV5J/exec
+      - GOOGLE_APPLICATION_CREDENTIALS=google-credentials.json

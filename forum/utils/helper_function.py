@@ -50,3 +50,11 @@ def edit_comments(
         if comment_id == comment.get("id", ""):
             comments[index] = edited_comment
     return comments
+
+
+def sort_documents(
+    docs: List[Dict[str, Any]], sort_mode: str, sort_by: str
+) -> List[Dict[str, Any]]:
+    return sorted(
+        docs, key=lambda x: x.get(sort_by, ""), reverse=sort_mode == "descending"
+    )
