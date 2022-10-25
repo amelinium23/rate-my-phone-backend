@@ -31,10 +31,6 @@ Prerequisites:
     GOOGLE_CREDENTIALS = ''
     GOOGLE_APPLICATION_CREDENTIALS = "google-credentials.json"
     GSM_ARENA_API_URL = 'https://script.google.com/macros/s/AKfycbwZVHW_-CozBkuiQwX-YEBA5L6PVhMV3YDu-1KZXHThiqdQxzyRfx89uf1Lm-8dDV5J/exec'
-    ALLEGRO_CLIENT_ID = ''
-    ALLEGRO_CLIENT_SECRET = ''
-    ALLEGRO_API_URL = ''
-    ALLEGRO_TOKEN_URL = ''
     ```
 
 #### VS Code setup
