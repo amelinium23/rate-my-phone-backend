@@ -4,7 +4,6 @@ from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from main.config import Config
 from docs.docs_routes import DOCS
-from allegro.allegro_routes import ALLEGRO
 from brands.brand_routes import BRANDS
 from forum.forum_routes import FORUM
 from device.device_routes import DEVICE
@@ -19,7 +18,6 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(USER)
     app.register_blueprint(DOCS)
     app.register_blueprint(FORUM)
-    app.register_blueprint(ALLEGRO)
 
 
 def not_found(e):

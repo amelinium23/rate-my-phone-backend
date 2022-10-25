@@ -38,8 +38,7 @@ Prerequisites:
 2. Inside .vscode create `launch.json` file, and copy the configuration:
     ```json
     {
-      "configurations":
-      [
+      "configurations": [
           {
               "name": "Python: Flask",
               "type": "python",

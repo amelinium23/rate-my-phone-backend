@@ -7,7 +7,9 @@ from firebase_admin.credentials import Certificate
 
 
 firebase_app: App = initialize_app(
-    Certificate(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+    Certificate(
+        f"{os.getcwd()}/{os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'google-credentials.json')}"
+    ),
 )
 db: FirestoreClient = firestore.client()
 google_cloud_client: CloudClient = CloudClient()
