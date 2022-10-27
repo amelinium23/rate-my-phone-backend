@@ -74,7 +74,7 @@ def _parse_recommended_devices_to_list(data: Dict[str, Any]) -> List[Dict[str, A
     return [
         value
         for key, value in data.items()
-        if key in ["recommended_1", "recommended_2"]
+        if key in ["recommended_1", "recommended_2", "recommended_3", "recommended_4"]
     ]
 
 

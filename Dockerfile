@@ -1,8 +1,7 @@
-FROM python:latest
+FROM python:3.9
 
-ADD . /app
-ADD google-credentials.json /app
+COPY . /app
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt
-CMD python3 gunicorn wsgi.py
+RUN pip install -r requirements.txt
+CMD gunicorn main.app:rate_my_phone_app
