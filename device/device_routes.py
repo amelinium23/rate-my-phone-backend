@@ -1,4 +1,6 @@
+from dataclasses import asdict
 import json
+from device.model.opinion import Opinion
 from device.utils.device_helper import (
     count_phones,
     get_comparison_of_devices,
@@ -10,10 +12,13 @@ from device.utils.device_helper import (
     get_search_result_from_api,
 )
 from device.utils.response_parser import get_devices_by_key
+from main.firebase.firebase_app import verify_token
+from user.utils.firebase_util import get_user_mapping
 from . import DEVICE
 from typing import Dict, List, Any
 from flask import Response, jsonify, request, current_app
 from google.cloud.firestore import Client as FirestoreClient
+from firebase_admin.auth import get_user
 
 
 @DEVICE.route("/")
@@ -109,5 +114,41 @@ def get_prices_of_phone() -> Response:
         params: Dict[str, str] = request.args.to_dict()
         device_key: str = params.get("device_key", "")
         return jsonify(get_comparison_of_price(device_key))
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
+@DEVICE.route("/opinion/add", methods=["POST"])
+def add_opinion() -> Response:
+    try:
+        headers: Dict[str, Any] = request.headers
+        token: str = str(headers["Authorization"]).split(" ")[1]
+        assert token is not None, "Authorization header is required"
+        user_uid: str = verify_token(token)["uid"]
+        data: Dict[str, Any] = json.loads(request.data)
+        db: FirestoreClient = current_app.config.get("FIRESTORE")
+        device_id: str = data.get("device_key", "")
+        title: str = data.get("title", "")
+        description: str = data.get("description", "")
+        user = get_user_mapping(get_user(user_uid))
+        opinion = Opinion(device_id, title, description, user_uid, user)
+        opinions = db.collection("opinions").document(device_id).get().to_dict()
+        real_opinions = opinions.get("opinions", [])
+        real_opinions.append(asdict(opinion))
+        db.collection("opinions").document(device_id).set({"opinions": real_opinions})
+        return jsonify(asdict(opinion))
+    except Exception as e:
+        return Response(str(e), status=500)
+
+
+@DEVICE.route("/opinion", methods=["GET"])
+def opinions_about_device() -> Response:
+    try:
+        args: Dict[str, str] = request.args.to_dict()
+        device_key: str = args.get("k", "")
+        db: FirestoreClient = current_app.config.get("FIRESTORE")
+        opinions = db.collection("opinions").document(device_key).get().to_dict()
+        real_opinions = opinions.get("opinions", []) if opinions else []
+        return jsonify(real_opinions)
     except Exception as e:
         return Response(str(e), status=500)
