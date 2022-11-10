@@ -1,4 +1,5 @@
-### Rate my phone - backend
+<h3 style="text-align: center;">Rate my phone - backend</h3>
+
 ![main](https://github.com/amelinium23/rate-my-phone-backend/actions/workflows/main.yml/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ---
@@ -10,6 +11,7 @@ Prerequisites:
   pip install virtualenv
   ```
 
+### Setup of environment
 1. Make virtual environment by command:
     ```bash
     python -m venv venv
