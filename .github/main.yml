@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  main:
+  master:
     name: Deploy to Render
     runs-on: ubuntu-latest
     steps:
