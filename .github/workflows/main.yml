@@ -1,0 +1,17 @@
+name: Rate my phone - deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  master:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment
+        uses: sws2apps/render-deployment@main
+        with:
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+          apiKey: ${{ secrets.RENDER_API_KEY }}
