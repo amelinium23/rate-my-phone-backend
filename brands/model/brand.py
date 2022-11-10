@@ -3,9 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class Brand:
-    brand_id: int
     "Brand id - like: 1, 2"
-    brand_name: str
+    brand_id: int
     "Brand name - Nokia"
-    key: str
+    brand_name: str
     "Accessor for brand - nokia it's a key"
+    key: str
