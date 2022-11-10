@@ -3,7 +3,7 @@ name: Rate my phone - deployment
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   main:
