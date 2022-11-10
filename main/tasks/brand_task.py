@@ -4,10 +4,14 @@ from flask import Flask
 from brands.model.brand import Brand
 from google.cloud.firestore import Client as FirestoreClient
 from utils.gsm_arena_utils import get_from_gsm_arena
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 def brand_task(app: Flask) -> None:
     with app.app_context():
+        logger.info("[TASK] Starting brand task")
         db: FirestoreClient = app.config.get("FIRESTORE")
         brands: List[Brand] = _get_brand_list()
         dicts_brands: List[Dict[str, Any]] = [

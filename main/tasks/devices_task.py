@@ -5,10 +5,14 @@ from flask import Flask
 from device.model.device import DeviceResponse
 from device.utils.response_parser import parse_response
 from utils.gsm_arena_utils import get_from_gsm_arena
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 def device_task(app: Flask) -> None:
     with app.app_context():
+        logger.info("[TASK] Starting device task")
         db: FirestoreClient = app.config.get("FIRESTORE")
         devices: List[DeviceResponse] = get_device_list_by_brands()
         parsed_devices = [asdict(device) for device in devices]
