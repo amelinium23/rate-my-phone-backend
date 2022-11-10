@@ -18,6 +18,7 @@ from forum.utils.image_uploader import upload_to_images_storage
 from main.firebase.firebase_app import verify_token
 from werkzeug.datastructures import FileStorage
 from google.cloud.firestore import Client as FirestoreClient
+from user.utils.user_helpers import get_user_information
 
 
 @FORUM.route("/", methods=["GET"])
@@ -71,6 +72,7 @@ def create_new_post() -> Response:
         token: str = str(headers["Authorization"]).split(" ")[1]
         assert token is not None, "Authorization header is required"
         user_uid: str = verify_token(token)["uid"]
+        user = get_user_information(user_uid)
         db: FirestoreClient = current_app.config.get("FIRESTORE", None)
         new_post = Post(
             id=str(uuid1()),
@@ -79,6 +81,7 @@ def create_new_post() -> Response:
             description=data.get("description", ""),
             type=data.get("type", ""),
             device_key=data.get("device_key", ""),
+            user=user,
         )
         posts: List[Dict[str, Any]] = get_docs_of_user(db, user_uid)
         posts.append(asdict(new_post))
@@ -160,12 +163,13 @@ def add_comment() -> Response:
         db: FirestoreClient = current_app.config.get("FIRESTORE", None)
         post_id: str = data.get("id", "")
         author_uid: str = data.get("authorId", "")
+        author = get_user_information(user_uid)
         posts: List[Dict[str, Any]] = get_docs_of_user(db, author_uid)
         comment_body: str = data.get("comment", "")
         post = find_post_by_id(post_id, posts) or {}
         comments = post.get("comments", []) or []
         new_comment = asdict(
-            Comment(id=str(uuid1()), uid=user_uid, comment=comment_body)
+            Comment(id=str(uuid1()), user=author, uid=user_uid, comment=comment_body)
         )
         comments.append(new_comment)
         post["comments"] = comments
@@ -212,11 +216,18 @@ def edit_comment() -> Response:
         db: FirestoreClient = current_app.config.get("FIRESTORE", None)
         comment_id: str = data.get("id", "")
         post_id: str = data.get("postId", "")
+        user = get_user_information(user_uid)
         author_uid: str = data.get("authorId", "")
         comment_body: str = data.get("comment", "")
         votes: int = data.get("votes", 0)
         edited_comment: Dict[str, Any] = asdict(
-            Comment(id=comment_id, uid=user_uid, comment=comment_body, votes=votes)
+            Comment(
+                id=comment_id,
+                user=user,
+                uid=user_uid,
+                comment=comment_body,
+                votes=votes,
+            )
         )
         posts: List[Dict[str, Any]] = get_docs_of_user(db, author_uid)
         post = find_post_by_id(post_id, posts) or {}
