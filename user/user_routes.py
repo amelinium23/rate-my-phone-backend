@@ -23,7 +23,7 @@ logger = getLogger(__name__)
 def get_user_by_id() -> Response:
     try:
         data: Dict[str, Any] = request.args.to_dict()
-        uid = data.get("uid")
+        uid = data.get("uid", "")
         assert uid is not None, "uid param is required"
         user = get_user_information(uid)
         logger.info(f"[USER]: Get user with uid {user.uid}")
