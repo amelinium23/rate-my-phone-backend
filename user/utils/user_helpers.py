@@ -18,7 +18,5 @@ def get_user_information(uid: str) -> User:
 
 def create_user_in_database(data: Dict[str, Any]) -> User:
     user = create_user(**data)
-    device = Device(**data.get("device", {}))
-    user_instance = User(**get_user_mapping(user), device=device)
-    update_device_of_user(user_instance.uid, device)
+    user_instance = User(**get_user_mapping(user), device=None)
     return user_instance
