@@ -132,7 +132,7 @@ def add_opinion() -> Response:
         description: str = data.get("description", "")
         user = get_user_mapping(get_user(user_uid))
         opinion = Opinion(device_id, title, description, user_uid, user)
-        opinions = db.collection("opinions").document(device_id).get().to_dict()
+        opinions = db.collection("opinions").document(device_id).get().to_dict() or {}
         real_opinions = opinions.get("opinions", [])
         real_opinions.append(asdict(opinion))
         db.collection("opinions").document(device_id).set({"opinions": real_opinions})
